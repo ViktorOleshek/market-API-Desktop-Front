@@ -1,4 +1,3 @@
-# Trade Market - BPL
 
 
 ## Domain description
