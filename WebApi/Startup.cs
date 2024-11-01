@@ -1,66 +1,74 @@
-using AutoMapper;
-using Business;
-using Business.Interfaces;
-using Business.Services;
-using Data.Data;
-using Data.Interfaces;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.OpenApi.Models;
-
 namespace WebApi
 {
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Threading.Tasks;
+	using AutoMapper;
+	using Business;
+	using Business.Interfaces;
+	using Business.Services;
+	using Data.Data;
+	using Data.Interfaces;
+	using Microsoft.AspNetCore.Builder;
+	using Microsoft.AspNetCore.Hosting;
+	using Microsoft.AspNetCore.HttpsPolicy;
+	using Microsoft.AspNetCore.Mvc;
+	using Microsoft.EntityFrameworkCore;
+	using Microsoft.Extensions.Configuration;
+	using Microsoft.Extensions.DependencyInjection;
+	using Microsoft.Extensions.Hosting;
+	using Microsoft.Extensions.Logging;
+	using Microsoft.OpenApi.Models;
 
-        public IConfiguration Configuration { get; }
+	public class Startup
+	{
+		public Startup(IConfiguration configuration)
+		{
+			Configuration = configuration;
+		}
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            //ToDo
+		public IConfiguration Configuration { get; }
 
-            services.AddControllers();
+		public void ConfigureServices(IServiceCollection services)
+		{
+			services.AddControllers();
 
-            //ToDo
-        }
+			services.AddDbContext<TradeMarketDbContext>(options =>
+				options.UseSqlServer(Configuration.GetConnectionString("Market")));
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            //ToDo
+			services.AddScoped<IProductService, ProductService>();
+			services.AddScoped<ICustomerService, CustomerService>();
+			services.AddScoped<IReceiptService, ReceiptService>();
+			services.AddScoped<IStatisticService, StatisticService>();
 
-            app.UseHttpsRedirection();
+			services.AddAutoMapper(typeof(AutomapperProfile).Assembly);
 
-            app.UseRouting();
+			services.AddSwaggerGen(c =>
+			{
+				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Trade Market API", Version = "v1" });
+			});
+		}
 
-            app.UseAuthorization();
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		{
+			if (env.IsDevelopment())
+			{
+				app.UseDeveloperExceptionPage();
+				app.UseSwagger();
+				app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Trade Market API v1"));
+			}
 
+			app.UseHttpsRedirection();
+			app.UseRouting();
+			app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
-    }
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllers();
+			});
+		}
+	}
 }
