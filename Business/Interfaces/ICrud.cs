@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 
 namespace Business.Interfaces
 {
-    public interface ICrud<TModel> where TModel : class
+    public interface ICrud<TModel>
+        where TModel : class
     {
         Task<IEnumerable<TModel>> GetAllAsync();
 

@@ -1,8 +1,8 @@
-﻿using Business.Models;
-using Data.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Business.Models;
+using Data.Interfaces;
 
 namespace Business.Interfaces
 {
