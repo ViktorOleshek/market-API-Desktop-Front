@@ -1,10 +1,11 @@
-﻿using Data.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Data.Entities;
 
 namespace Data.Interfaces
 {
-    public interface IRepository<TEntity> where TEntity : BaseEntity
+    public interface IRepository<TEntity>
+        where TEntity : class
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
 
