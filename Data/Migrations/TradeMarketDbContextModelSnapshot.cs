@@ -17,10 +17,10 @@ namespace Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Data.Entities.Customer", b =>
                 {
@@ -29,7 +29,7 @@ namespace Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("DiscountValue")
                         .HasColumnType("int");
@@ -52,7 +52,7 @@ namespace Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
@@ -75,7 +75,7 @@ namespace Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)")
@@ -103,7 +103,7 @@ namespace Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CategoryName")
                         .HasColumnType("nvarchar(max)")
@@ -121,7 +121,7 @@ namespace Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -141,33 +141,28 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.ReceiptDetail", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<decimal>("DiscountUnitPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ReceiptId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<decimal>("DiscountUnitPrice")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ReceiptId")
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ReceiptId", "ProductId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("ReceiptId");
 
                     b.ToTable("ReceiptDetail");
                 });

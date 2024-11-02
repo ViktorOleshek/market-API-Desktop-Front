@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Data.Migrations
 {
+    /// <inheritdoc />
     public partial class InitialCreate : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            ArgumentNullException.ThrowIfNull(migrationBuilder);
-
             migrationBuilder.CreateTable(
                 name: "Person",
                 columns: table => new
@@ -19,7 +19,7 @@ namespace Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,7 +32,7 @@ namespace Data.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CaregoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CaregoryName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -46,7 +46,7 @@ namespace Data.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PersonId = table.Column<int>(type: "int", nullable: false),
-                    DiscountValue = table.Column<int>(type: "int", nullable: false),
+                    DiscountValue = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,7 +67,7 @@ namespace Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductCategoryId = table.Column<int>(type: "int", nullable: false),
                     ProductName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,7 +88,7 @@ namespace Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     OperationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsCheckedOut = table.Column<bool>(type: "bit", nullable: false),
+                    IsCheckedOut = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,17 +105,16 @@ namespace Data.Migrations
                 name: "ReceiptDetail",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     ReceiptId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     DiscountUnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
+                    id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReceiptDetail", x => x.id);
+                    table.PrimaryKey("PK_ReceiptDetail", x => new { x.ReceiptId, x.ProductId });
                     table.ForeignKey(
                         name: "FK_ReceiptDetail_Product_ProductId",
                         column: x => x.ProductId,
@@ -150,17 +149,11 @@ namespace Data.Migrations
                 name: "IX_ReceiptDetail_ProductId",
                 table: "ReceiptDetail",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ReceiptDetail_ReceiptId",
-                table: "ReceiptDetail",
-                column: "ReceiptId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            ArgumentNullException.ThrowIfNull(migrationBuilder);
-
             migrationBuilder.DropTable(
                 name: "ReceiptDetail");
 
