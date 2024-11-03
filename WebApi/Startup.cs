@@ -23,53 +23,53 @@ namespace WebApi
     using Microsoft.OpenApi.Models;
 
     public class Startup
-	{
-		public Startup(IConfiguration configuration)
-		{
-			Configuration = configuration;
-		}
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
-		public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; }
 
-		public void ConfigureServices(IServiceCollection services)
-		{
-			services.AddControllers();
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
 
-			services.AddDbContext<TradeMarketDbContext>(options =>
-				options.UseSqlServer(Configuration.GetConnectionString("Market")));
+            services.AddDbContext<TradeMarketDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("Market")));
 
-			services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-			services.AddScoped<IProductService, ProductService>();
-			services.AddScoped<ICustomerService, CustomerService>();
-			services.AddScoped<IReceiptService, ReceiptService>();
-			services.AddScoped<IStatisticService, StatisticService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IReceiptService, ReceiptService>();
+            services.AddScoped<IStatisticService, StatisticService>();
 
-			services.AddAutoMapper(typeof(AutomapperProfile).Assembly);
+            services.AddAutoMapper(typeof(AutomapperProfile).Assembly);
 
-			services.AddSwaggerGen(c =>
-			{
-				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Trade Market API", Version = "v1" });
-			});
-		}
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Trade Market API", Version = "v1" });
+            });
+        }
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-				app.UseSwagger();
-				app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Trade Market API v1"));
-			}
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Trade Market API v1"));
+            }
 
-			app.UseHttpsRedirection();
-			app.UseRouting();
-			app.UseAuthorization();
+            app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseAuthorization();
 
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapControllers();
-			});
-		}
-	}
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+    }
 }
