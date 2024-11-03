@@ -11,8 +11,6 @@ namespace WPF.ViewModels
 
 		public MainViewModel()
 		{
-			var httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:5001/") };
-
 			CustomerViewModel = new CustomerViewModel();
 			ReceiptViewModel = new ReceiptViewModel();
 		}
