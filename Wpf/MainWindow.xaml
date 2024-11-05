@@ -24,7 +24,6 @@
                               SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"
                               Name="customersGrid">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Customer ID" Binding="{Binding Id}"/>
                             <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
                             <DataGridTextColumn Header="Surname" Binding="{Binding Surname}"/>
                             <DataGridTextColumn Header="Birth Date" Binding="{Binding BirthDate, StringFormat='{}{0:dd/MM/yyyy}'}"/>
@@ -53,7 +52,6 @@
                               SelectedItem="{Binding SelectedReceipt, Mode=TwoWay}"
                               Name="receiptsGrid">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Receipt ID" Binding="{Binding Id}"/>
                             <DataGridTextColumn Header="Customer ID" Binding="{Binding CustomerId}"/>
                             <DataGridTextColumn Header="Operation Date" Binding="{Binding OperationDate, StringFormat='{}{0:dd/MM/yyyy}'}"/>
                             <DataGridTextColumn Header="Checked Out" Binding="{Binding IsCheckedOut}"/>
