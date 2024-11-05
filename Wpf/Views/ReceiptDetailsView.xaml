@@ -3,10 +3,42 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Wpf.Views"
         mc:Ignorable="d"
-        Title="ReceiptDetailsView" Height="450" Width="800">
-    <Grid>
-        
+        Title="Receipt Details" Height="330" Width="400" WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Customer ID -->
+        <Label Content="Customer ID:" Grid.Row="0" Grid.Column="0" Margin="5"/>
+        <TextBox Text="{Binding SelectedReceipt.CustomerId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 Grid.Row="0" Grid.Column="1" Margin="5"/>
+
+        <Label Content="Operation Date:" Grid.Row="1" Grid.Column="0" Margin="5"/>
+        <DatePicker SelectedDate="{Binding SelectedReceipt.OperationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Grid.Row="1" Grid.Column="1" Margin="5"/>
+
+        <Label Content="Checked Out:" Grid.Row="2" Grid.Column="0" Margin="5"/>
+        <CheckBox IsChecked="{Binding SelectedReceipt.IsCheckedOut, Mode=TwoWay}" 
+                  Grid.Row="2" Grid.Column="1" Margin="5"/>
+
+        <Label Content="Receipt Details IDs:" Grid.Row="3" Grid.Column="0" Margin="5"/>
+        <TextBox Text="{Binding SelectedReceipt.ReceiptDetailsIds.Count, Mode=OneWay}" 
+                 Grid.Row="3" Grid.Column="1" Margin="5"/>
+
+        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Save" Command="{Binding SaveCommand}" Margin="5"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="5"/>
+        </StackPanel>
     </Grid>
 </Window>
