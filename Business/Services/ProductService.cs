@@ -80,5 +80,17 @@ namespace Business.Services
                 throw new MarketException();
             }
         }
+
+        public async Task<IEnumerable<ProductModel>> GetAllAsync()
+        {
+            var entities = await this.UnitOfWork.ProductRepository.GetAllWithDetailsAsync();
+            return this.Mapper.Map<IEnumerable<ProductModel>>(entities);
+        }
+
+        public async Task<ProductModel> GetByIdAsync(int id)
+        {
+            var entity = await this.UnitOfWork.ProductRepository.GetByIdWithDetailsAsync(id);
+            return this.Mapper.Map<ProductModel>(entity);
+        }
     }
 }

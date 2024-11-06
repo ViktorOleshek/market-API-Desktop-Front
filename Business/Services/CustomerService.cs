@@ -19,6 +19,18 @@ namespace Business.Services
         {
         }
 
+        public async Task<IEnumerable<CustomerModel>> GetAllAsync()
+        {
+            var entities = await this.UnitOfWork.CustomerRepository.GetAllWithDetailsAsync();
+            return this.Mapper.Map<IEnumerable<CustomerModel>>(entities);
+        }
+
+        public async Task<CustomerModel> GetByIdAsync(int id)
+        {
+            var entity = await this.UnitOfWork.CustomerRepository.GetByIdWithDetailsAsync(id);
+            return this.Mapper.Map<CustomerModel>(entity);
+        }
+
         public async Task<IEnumerable<CustomerModel>> GetCustomersByProductIdAsync(int productId)
         {
             var customers = await this.UnitOfWork.CustomerRepository.GetAllWithDetailsAsync();

@@ -12,7 +12,7 @@ using Data.Interfaces;
 
 namespace Business.Services
 {
-    public abstract class AbstractService<TModel, TEntities> : ICrud<TModel>
+    public abstract class AbstractService<TModel, TEntities>
         where TModel : BaseModel
         where TEntities : BaseEntity
     {
@@ -28,18 +28,6 @@ namespace Business.Services
         protected IUnitOfWork UnitOfWork => this.unitOfWork;
 
         protected IMapper Mapper => this.mapper;
-
-        public virtual async Task<IEnumerable<TModel>> GetAllAsync()
-        {
-            var entities = await (this.GetRepository() as dynamic).GetAllWithDetailsAsync();
-            return this.Mapper.Map<IEnumerable<TModel>>(entities);
-        }
-
-        public virtual async Task<TModel> GetByIdAsync(int id)
-        {
-            var entity = await (this.GetRepository() as dynamic).GetByIdWithDetailsAsync(id);
-            return this.Mapper.Map<TModel>(entity);
-        }
 
         public virtual async Task AddAsync(TModel model)
         {

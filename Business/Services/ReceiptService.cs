@@ -135,5 +135,17 @@ namespace Business.Services
                 throw new MarketException();
             }
         }
+
+        public async Task<IEnumerable<ReceiptModel>> GetAllAsync()
+        {
+            var entities = await this.UnitOfWork.ReceiptRepository.GetAllWithDetailsAsync();
+            return this.Mapper.Map<IEnumerable<ReceiptModel>>(entities);
+        }
+
+        public async Task<ReceiptModel> GetByIdAsync(int id)
+        {
+            var entity = await this.UnitOfWork.ReceiptRepository.GetByIdWithDetailsAsync(id);
+            return this.Mapper.Map<ReceiptModel>(entity);
+        }
     }
 }
