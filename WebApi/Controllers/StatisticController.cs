@@ -3,9 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Business.Interfaces;
-    using Business.Models;
     using Microsoft.AspNetCore.Mvc;
+    using Abstraction.Models;
 
     [ApiController]
     [Route("api/statistics")] // Set route to match test URI

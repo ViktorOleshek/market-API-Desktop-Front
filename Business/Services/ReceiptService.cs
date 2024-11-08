@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Business.Validation;
-using Data.Interfaces;
 
 namespace Business.Services
 {

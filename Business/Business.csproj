@@ -31,7 +31,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Abstraction\Abstraction.csproj" />
-    <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
 </Project>

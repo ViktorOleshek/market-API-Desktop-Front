@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Abstraction.Models;
-using Data.Entities;
 using AutoMapper;
 
 namespace Business

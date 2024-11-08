@@ -2,8 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Business.Interfaces;
-    using Business.Models;
+    using Abstraction.IServices;
+    using Abstraction.Models;
     using Microsoft.AspNetCore.Mvc;
 
     [Route("api/[controller]")]

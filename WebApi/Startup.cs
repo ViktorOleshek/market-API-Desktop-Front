@@ -5,12 +5,6 @@ namespace WebApi
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    using Business;
-    using Business.Interfaces;
-    using Business.Services;
-    using Data.Data;
-    using Data.Entities;
-    using Data.Interfaces;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,7 +20,7 @@ namespace WebApi
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -36,7 +30,7 @@ namespace WebApi
             services.AddControllers();
 
             services.AddDbContext<TradeMarketDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("Market")));
+                options.UseSqlServer(this.Configuration.GetConnectionString("Market")));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
