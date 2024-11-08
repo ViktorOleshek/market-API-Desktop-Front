@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Models
+namespace Abstraction.Models
 {
     public class ProductCategoryModel : BaseModel
     {

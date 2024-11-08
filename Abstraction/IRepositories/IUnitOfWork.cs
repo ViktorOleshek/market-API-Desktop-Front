@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Data.Interfaces
+namespace Abstraction.IRepositories
 {
     public interface IUnitOfWork
     {

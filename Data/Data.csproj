@@ -32,5 +32,9 @@
     <Folder Include="Repositories\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Abstraction\Abstraction.csproj" />
+  </ItemGroup>
+
 
 </Project>

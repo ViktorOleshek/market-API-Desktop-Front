@@ -1,6 +1,6 @@
 ﻿using Data.Entities;
 
-namespace Data.Interfaces
+namespace Abstraction.IRepositories
 {
     public interface IPersonRepository : IRepository<Person>
     {

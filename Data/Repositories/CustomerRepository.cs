@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Data.Data;
 using Data.Entities;
-using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories

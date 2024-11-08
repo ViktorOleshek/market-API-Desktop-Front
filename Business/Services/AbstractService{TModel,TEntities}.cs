@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IRepositories;
+using Abstraction.Models;
 using AutoMapper;
-using Business.Interfaces;
-using Business.Models;
 using Business.Validation;
-using Data.Entities;
-using Data.Interfaces;
 
 namespace Business.Services
 {
-    public abstract class AbstractService<TModel, TEntities>
+    public abstract class AbstractService<TModel>
         where TModel : BaseModel
-        where TEntities : BaseEntity
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;

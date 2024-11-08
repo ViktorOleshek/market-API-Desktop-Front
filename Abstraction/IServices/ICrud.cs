@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Business.Interfaces
+namespace Abstraction.IServices
 {
     public interface ICrud<TModel>
         where TModel : class

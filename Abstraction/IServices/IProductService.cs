@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Business.Models;
+using Abstraction.Models;
 
-namespace Business.Interfaces
+namespace Abstraction.IServices
 {
     public interface IProductService : ICrud<ProductModel>
     {

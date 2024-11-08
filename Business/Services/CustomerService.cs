@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IRepositories;
+using Abstraction.IServices;
+using Abstraction.Models;
 using AutoMapper;
-using Business.Interfaces;
-using Business.Models;
 using Business.Validation;
-using Data.Entities;
-using Data.Interfaces;
 
 namespace Business.Services
 {
-    public class CustomerService : AbstractService<CustomerModel, Customer>, ICustomerService
+    public class CustomerService : AbstractService<CustomerModel>, ICustomerService
     {
         public CustomerService(IUnitOfWork unitOfWork, IMapper mapper)
             : base(unitOfWork, mapper)

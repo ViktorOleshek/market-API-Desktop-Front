@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Business.Models;
-using Data.Interfaces;
+using Abstraction.Models;
 
-namespace Business.Interfaces
+namespace Abstraction.IServices
 {
     public interface IReceiptService : ICrud<ReceiptModel>
     {

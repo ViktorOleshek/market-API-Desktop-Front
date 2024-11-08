@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Data.Entities;
 
-namespace Data.Interfaces
+namespace Abstraction.IRepositories
 {
     public interface IProductRepository : IRepository<Product>
     {
