@@ -1,22 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Data.Entities;
 
 namespace Abstraction.IRepositories
 {
-    public interface IRepository<TEntity>
-        where TEntity : class
+    public interface IRepository<TModel>
+        where TModel : class
     {
-        Task<IEnumerable<TEntity>> GetAllAsync();
+        Task<IEnumerable<TModel>> GetAllAsync();
 
-        Task<TEntity> GetByIdAsync(int id);
+        Task<TModel> GetByIdAsync(int id);
 
-        Task AddAsync(TEntity entity);
+        Task AddAsync(TModel entity);
 
-        void Delete(TEntity entity);
+        void Delete(TModel entity);
 
         Task DeleteByIdAsync(int id);
 
-        void Update(TEntity entity);
+        void Update(TModel entity);
     }
 }

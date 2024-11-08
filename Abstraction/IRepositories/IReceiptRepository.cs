@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Data.Entities;
+﻿using Abstraction.Models;
 
 namespace Abstraction.IRepositories
 {
-    public interface IReceiptRepository : IRepository<Receipt>
+    public interface IReceiptRepository : IRepository<ReceiptModel>
     {
-        Task<IEnumerable<Receipt>> GetAllWithDetailsAsync();
+        Task<IEnumerable<ReceiptModel>> GetAllWithDetailsAsync();
 
-        Task<Receipt> GetByIdWithDetailsAsync(int id);
+        Task<ReceiptModel> GetByIdWithDetailsAsync(int id);
     }
 }

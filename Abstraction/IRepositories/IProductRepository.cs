@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Data.Entities;
+﻿using Abstraction.Models;
 
 namespace Abstraction.IRepositories
 {
-    public interface IProductRepository : IRepository<Product>
+    public interface IProductRepository : IRepository<ProductModel>
     {
-        Task<IEnumerable<Product>> GetAllWithDetailsAsync();
+        Task<IEnumerable<ProductModel>> GetAllWithDetailsAsync();
 
-        Task<Product> GetByIdWithDetailsAsync(int id);
+        Task<ProductModel> GetByIdWithDetailsAsync(int id);
     }
 }
