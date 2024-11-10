@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IRepositories;
+using Abstraction.Models;
 using Data.Data;
 using Data.Entities;
-using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
-    public class ReceiptRepository : AbstractRepository<Receipt>, IReceiptRepository
+    public class ReceiptRepository : AbstractRepository<Receipt, ReceiptModel>, IReceiptRepository
     {
         public ReceiptRepository(TradeMarketDbContext context)
             : base(context)
@@ -18,7 +19,7 @@ namespace Data.Repositories
             ArgumentNullException.ThrowIfNull(context);
         }
 
-        public async Task<IEnumerable<Receipt>> GetAllWithDetailsAsync()
+        public async Task<IEnumerable<ReceiptModel>> GetAllWithDetailsAsync()
         {
             return await this.Context.Set<Receipt>()
                 .Include(e => e.ReceiptDetails)
@@ -29,7 +30,7 @@ namespace Data.Repositories
                 .ToListAsync();
         }
 
-        public Task<Receipt> GetByIdWithDetailsAsync(int id)
+        public Task<ReceiptModel> GetByIdWithDetailsAsync(int id)
         {
             return this.Context.Set<Receipt>()
                 .Include(e => e.ReceiptDetails)

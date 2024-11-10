@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IRepositories;
+using Abstraction.Models;
 using Data.Data;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
-    public class CustomerRepository : AbstractRepository<Customer>, ICustomerRepository
+    public class CustomerRepository : AbstractRepository<Customer, CustomerModel>, ICustomerRepository
     {
         public CustomerRepository(TradeMarketDbContext context)
             : base(context)
@@ -17,7 +19,7 @@ namespace Data.Repositories
             ArgumentNullException.ThrowIfNull(context);
         }
 
-        public async Task<IEnumerable<Customer>> GetAllWithDetailsAsync()
+        public async Task<IEnumerable<CustomerModel>> GetAllWithDetailsAsync()
         {
             return await this.Context.Set<Customer>()
                 .Include(e => e.Person)
@@ -26,7 +28,7 @@ namespace Data.Repositories
                 .ToListAsync();
         }
 
-        public Task<Customer> GetByIdWithDetailsAsync(int id)
+        public Task<CustomerModel> GetByIdWithDetailsAsync(int id)
         {
             return this.Context.Set<Customer>()
                 .Include(e => e.Receipts)

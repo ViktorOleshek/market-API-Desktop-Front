@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using Abstraction.Models;
 using AutoMapper;
+using Data.Entities;
 
-namespace Business
+namespace Data
 {
     public class AutomapperProfile : Profile
     {

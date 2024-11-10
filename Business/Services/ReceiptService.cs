@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IRepositories;
+using Abstraction.IServices;
+using Abstraction.Models;
 using AutoMapper;
 using Business.Validation;
 
 namespace Business.Services
 {
-    public class ReceiptService : AbstractService<ReceiptModel, Receipt>, IReceiptService
+    public class ReceiptService : AbstractService<ReceiptModel>, IReceiptService
     {
         public ReceiptService(IUnitOfWork unitOfWork, IMapper mapper)
             : base(unitOfWork, mapper)

@@ -3,35 +3,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abstraction.Models;
+using AutoMapper;
 using Data.Data;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
-    public abstract class AbstractRepository<TEntity>
+    public abstract class AbstractRepository<TEntity, TModel>
         where TEntity : BaseEntity
+        where TModel : BaseModel
     {
-        protected AbstractRepository(TradeMarketDbContext context)
+        private readonly IMapper mapper;
+
+        protected AbstractRepository(TradeMarketDbContext context, IMapper mapper)
         {
             this.Context = context;
+            this.mapper = mapper;
         }
 
         protected TradeMarketDbContext Context { get; }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        protected IMapper Mapper => this.mapper;
+
+        public async Task<IEnumerable<TModel>> GetAllAsync()
         {
             return await this.Context.Set<TEntity>().ToListAsync();
         }
 
-        public Task<TEntity> GetByIdAsync(int id) =>
-            this.Context.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == id);
+        public Task<TModel> GetByIdAsync(int id)
+        {
+            return this.Context.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == id);
+        }
 
-        public Task AddAsync(TEntity entity) =>
-            this.Context.AddAsync(entity).AsTask();
+        public Task AddAsync(TModel entity)
+        {
+            return this.Context.AddAsync(entity).AsTask();
+        }
 
-        public void Delete(TEntity entity) =>
+        public void Delete(TModel entity)
+        {
             this.Context.Remove(entity);
+        }
 
         public virtual async Task DeleteByIdAsync(int id)
         {
@@ -45,7 +59,7 @@ namespace Data.Repositories
             }
         }
 
-        public void Update(TEntity entity) =>
+        public void Update(TModel entity) =>
             this.Context.Update(entity);
     }
 }

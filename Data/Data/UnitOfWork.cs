@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Data.Interfaces;
+using Abstraction.IRepositories;
 using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
