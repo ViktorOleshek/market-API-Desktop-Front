@@ -14,31 +14,25 @@ namespace Business.Services
         where TModel : BaseModel
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
 
-        protected AbstractService(IUnitOfWork unitOfWork, IMapper mapper)
+        protected AbstractService(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
         }
 
         protected IUnitOfWork UnitOfWork => this.unitOfWork;
 
-        protected IMapper Mapper => this.mapper;
-
         public virtual async Task AddAsync(TModel model)
         {
             this.Validation(model);
-            var entity = this.Mapper.Map<TEntities>(model);
-            await this.GetRepository().AddAsync(entity);
+            await this.GetRepository().AddAsync(model);
             await this.UnitOfWork.SaveAsync();
         }
 
         public virtual async Task UpdateAsync(TModel model)
         {
             this.Validation(model);
-            var entity = this.Mapper.Map<TEntities>(model);
-            await Task.Run(() => this.GetRepository().Update(entity));
+            await Task.Run(() => this.GetRepository().Update(model));
             await this.UnitOfWork.SaveAsync();
         }
 
@@ -48,7 +42,7 @@ namespace Business.Services
             await this.UnitOfWork.SaveAsync();
         }
 
-        protected abstract IRepository<TEntities> GetRepository();
+        protected abstract IRepository<TModel> GetRepository();
 
         protected abstract void Validation(TModel model);
     }

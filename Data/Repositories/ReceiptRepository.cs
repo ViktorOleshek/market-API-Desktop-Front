@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Abstraction.IRepositories;
 using Abstraction.Models;
+using AutoMapper;
 using Data.Data;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,8 @@ namespace Data.Repositories
 {
     public class ReceiptRepository : AbstractRepository<Receipt, ReceiptModel>, IReceiptRepository
     {
-        public ReceiptRepository(TradeMarketDbContext context)
-            : base(context)
+        public ReceiptRepository(TradeMarketDbContext context, IMapper mapper)
+            : base(context, mapper)
         {
             ArgumentNullException.ThrowIfNull(context);
         }

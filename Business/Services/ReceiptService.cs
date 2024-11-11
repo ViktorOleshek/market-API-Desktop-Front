@@ -12,8 +12,8 @@ namespace Business.Services
 {
     public class ReceiptService : AbstractService<ReceiptModel>, IReceiptService
     {
-        public ReceiptService(IUnitOfWork unitOfWork, IMapper mapper)
-            : base(unitOfWork, mapper)
+        public ReceiptService(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
         }
 
@@ -71,8 +71,7 @@ namespace Business.Services
                 ?? throw new MarketException("No receipts found within the specified period.");
 
             var filteredReceipts = receipts.Where(r => r.OperationDate > startDate && r.OperationDate < endDate).ToList();
-
-            return this.Mapper.Map<IEnumerable<ReceiptModel>>(filteredReceipts);
+            return filteredReceipts;
         }
 
         public async Task RemoveProductAsync(int productId, int receiptId, int quantity)
@@ -117,6 +116,16 @@ namespace Business.Services
             await this.UnitOfWork.SaveAsync();
         }
 
+        public async Task<IEnumerable<ReceiptModel>> GetAllAsync()
+        {
+            return await this.UnitOfWork.ReceiptRepository.GetAllWithDetailsAsync();
+        }
+
+        public async Task<ReceiptModel> GetByIdAsync(int id)
+        {
+            return await this.UnitOfWork.ReceiptRepository.GetByIdWithDetailsAsync(id);
+        }
+
         protected override IReceiptRepository GetRepository()
         {
             return this.UnitOfWork.ReceiptRepository;
@@ -132,18 +141,6 @@ namespace Business.Services
             {
                 throw new MarketException();
             }
-        }
-
-        public async Task<IEnumerable<ReceiptModel>> GetAllAsync()
-        {
-            var entities = await this.UnitOfWork.ReceiptRepository.GetAllWithDetailsAsync();
-            return this.Mapper.Map<IEnumerable<ReceiptModel>>(entities);
-        }
-
-        public async Task<ReceiptModel> GetByIdAsync(int id)
-        {
-            var entity = await this.UnitOfWork.ReceiptRepository.GetByIdWithDetailsAsync(id);
-            return this.Mapper.Map<ReceiptModel>(entity);
         }
     }
 }

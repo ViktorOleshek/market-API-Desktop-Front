@@ -29,21 +29,25 @@ namespace Data.Repositories
 
         public async Task<IEnumerable<TModel>> GetAllAsync()
         {
-            return await this.Context.Set<TEntity>().ToListAsync();
+            var result = await this.Context.Set<TEntity>().ToListAsync();
+            return this.Mapper.Map<IEnumerable<TModel>>(result);
         }
 
-        public Task<TModel> GetByIdAsync(int id)
+        public async Task<TModel> GetByIdAsync(int id)
         {
-            return this.Context.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await this.Context.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == id);
+            return this.Mapper.Map<TModel>(entity);
         }
 
-        public Task AddAsync(TModel entity)
+        public async Task AddAsync(TModel model)
         {
-            return this.Context.AddAsync(entity).AsTask();
+            var entity = this.Mapper.Map<TEntity>(model);
+            await this.Context.AddAsync(entity);
         }
 
-        public void Delete(TModel entity)
+        public void Delete(TModel model)
         {
+            var entity = this.Mapper.Map<TEntity>(model);
             this.Context.Remove(entity);
         }
 
@@ -59,7 +63,10 @@ namespace Data.Repositories
             }
         }
 
-        public void Update(TModel entity) =>
+        public void Update(TModel model)
+        {
+            var entity = this.Mapper.Map<TEntity>(model);
             this.Context.Update(entity);
+        }
     }
 }

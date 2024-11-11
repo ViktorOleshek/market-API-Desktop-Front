@@ -12,8 +12,8 @@ namespace Business.Services
 {
     public class StatisticService : AbstractService<ReceiptModel>, IStatisticService
     {
-        public StatisticService(IUnitOfWork unitOfWork, IMapper mapper)
-            : base(unitOfWork, mapper)
+        public StatisticService(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
         }
 
@@ -29,7 +29,7 @@ namespace Business.Services
                 .Take(productCount)
                 .Select(g => g.Key);
 
-            return this.Mapper.Map<IEnumerable<ProductModel>>(popularProducts);
+            return popularProducts;
         }
 
         public async Task<decimal> GetIncomeOfCategoryInPeriod(int categoryId, DateTime startDate, DateTime endDate)
@@ -55,7 +55,7 @@ namespace Business.Services
                 .Take(productCount)
                 .Select(g => g.Key);
 
-            return this.Mapper.Map<IEnumerable<ProductModel>>(mostPopularProducts);
+            return mostPopularProducts;
         }
 
         public async Task<IEnumerable<CustomerActivityModel>> GetMostValuableCustomersAsync(int customerCount, DateTime startDate, DateTime endDate)

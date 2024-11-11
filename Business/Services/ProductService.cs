@@ -12,23 +12,21 @@ namespace Business.Services
 {
     public class ProductService : AbstractService<ProductModel>, IProductService
     {
-        public ProductService(IUnitOfWork unitOfWork, IMapper mapper)
-            : base(unitOfWork, mapper)
+        public ProductService(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
         }
 
         public async Task AddCategoryAsync(ProductCategoryModel categoryModel)
         {
             Validation(categoryModel);
-            var entity = this.Mapper.Map<ProductCategory>(categoryModel);
-            await this.UnitOfWork.ProductCategoryRepository.AddAsync(entity);
+            await this.UnitOfWork.ProductCategoryRepository.AddAsync(categoryModel);
             await this.UnitOfWork.SaveAsync();
         }
 
         public async Task<IEnumerable<ProductCategoryModel>> GetAllProductCategoriesAsync()
         {
-            var entities = await this.UnitOfWork.ProductCategoryRepository.GetAllAsync();
-            return this.Mapper.Map<IEnumerable<ProductCategoryModel>>(entities);
+            return await this.UnitOfWork.ProductCategoryRepository.GetAllAsync();
         }
 
         public async Task<IEnumerable<ProductModel>> GetByFilterAsync(FilterSearchModel filterSearch)
@@ -38,7 +36,7 @@ namespace Business.Services
                 (filterSearch.MinPrice == null || p.Price >= filterSearch.MinPrice) &&
                 (filterSearch.MaxPrice == null || p.Price <= filterSearch.MaxPrice) &&
                 (filterSearch.CategoryId == null || p.ProductCategoryId == filterSearch.CategoryId));
-            return this.Mapper.Map<IEnumerable<ProductModel>>(filterProduct);
+            return filterProduct;
         }
 
         public async Task RemoveCategoryAsync(int categoryId)
@@ -50,9 +48,18 @@ namespace Business.Services
         public async Task UpdateCategoryAsync(ProductCategoryModel categoryModel)
         {
             Validation(categoryModel);
-            var entity = this.Mapper.Map<ProductCategory>(categoryModel);
-            this.UnitOfWork.ProductCategoryRepository.Update(entity);
+            this.UnitOfWork.ProductCategoryRepository.Update(categoryModel);
             await this.UnitOfWork.SaveAsync();
+        }
+
+        public async Task<IEnumerable<ProductModel>> GetAllAsync()
+        {
+            return await this.UnitOfWork.ProductRepository.GetAllWithDetailsAsync();
+        }
+
+        public async Task<ProductModel> GetByIdAsync(int id)
+        {
+            return await this.UnitOfWork.ProductRepository.GetByIdWithDetailsAsync(id);
         }
 
         protected static void Validation(ProductCategoryModel model)
@@ -77,18 +84,6 @@ namespace Business.Services
             {
                 throw new MarketException();
             }
-        }
-
-        public async Task<IEnumerable<ProductModel>> GetAllAsync()
-        {
-            var entities = await this.UnitOfWork.ProductRepository.GetAllWithDetailsAsync();
-            return this.Mapper.Map<IEnumerable<ProductModel>>(entities);
-        }
-
-        public async Task<ProductModel> GetByIdAsync(int id)
-        {
-            var entity = await this.UnitOfWork.ProductRepository.GetByIdWithDetailsAsync(id);
-            return this.Mapper.Map<ProductModel>(entity);
         }
     }
 }
