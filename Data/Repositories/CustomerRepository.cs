@@ -22,20 +22,24 @@ namespace Data.Repositories
 
         public async Task<IEnumerable<CustomerModel>> GetAllWithDetailsAsync()
         {
-            return await this.Context.Set<Customer>()
+            var result = await this.Context.Set<Customer>()
                 .Include(e => e.Person)
                 .Include(e => e.Receipts)
                     .ThenInclude(r => r.ReceiptDetails)
                 .ToListAsync();
+
+            return this.Mapper.Map<IEnumerable<CustomerModel>>(result);
         }
 
-        public Task<CustomerModel> GetByIdWithDetailsAsync(int id)
+        public async Task<CustomerModel> GetByIdWithDetailsAsync(int id)
         {
-            return this.Context.Set<Customer>()
+            var result = await this.Context.Set<Customer>()
                 .Include(e => e.Receipts)
                     .ThenInclude(r => r.ReceiptDetails)
                 .Include(e => e.Person)
                 .FirstOrDefaultAsync(e => e.Id == id);
+
+            return this.Mapper.Map<CustomerModel>(result);
         }
     }
 }

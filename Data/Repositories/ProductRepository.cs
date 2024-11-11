@@ -22,18 +22,22 @@ namespace Data.Repositories
 
         public async Task<IEnumerable<ProductModel>> GetAllWithDetailsAsync()
         {
-            return await this.Context.Set<Product>()
+            var result = await this.Context.Set<Product>()
                 .Include(e => e.ReceiptDetails)
                 .Include(e => e.Category)
                 .ToListAsync();
+
+            return this.Mapper.Map<IEnumerable<ProductModel>>(result);
         }
 
-        public Task<ProductModel> GetByIdWithDetailsAsync(int id)
+        public async Task<ProductModel> GetByIdWithDetailsAsync(int id)
         {
-            return this.Context.Set<Product>()
+            var result = await this.Context.Set<Product>()
                 .Include(e => e.ReceiptDetails)
                 .Include(e => e.Category)
                 .FirstOrDefaultAsync(e => e.Id == id);
+
+            return this.Mapper.Map<ProductModel>(result);
         }
     }
 }

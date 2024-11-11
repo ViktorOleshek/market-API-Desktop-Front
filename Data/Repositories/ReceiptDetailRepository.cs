@@ -22,11 +22,13 @@ namespace Data.Repositories
 
         public async Task<IEnumerable<ReceiptDetailModel>> GetAllWithDetailsAsync()
         {
-            return await this.Context.Set<ReceiptDetail>()
+            var result = await this.Context.Set<ReceiptDetail>()
                 .Include(e => e.Product)
                     .ThenInclude(e => e.Category)
                 .Include(e => e.Receipt)
                 .ToListAsync();
+
+            return this.Mapper.Map<IEnumerable<ReceiptDetailModel>>(result);
         }
     }
 }
