@@ -3,8 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
+    using Abstraction.IServices;
     using Abstraction.Models;
+    using Microsoft.AspNetCore.Mvc;
 
     [ApiController]
     [Route("api/statistics")] // Set route to match test URI
