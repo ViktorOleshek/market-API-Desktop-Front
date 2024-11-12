@@ -4,6 +4,9 @@ namespace WebApi
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Abstraction.IRepositories;
+    using Abstraction.IServices;
+    using Abstraction.Models;
     using AutoMapper;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -29,17 +32,17 @@ namespace WebApi
         {
             services.AddControllers();
 
-            services.AddDbContext<TradeMarketDbContext>(options =>
+            services.AddDbContext<Data.Data.TradeMarketDbContext>(options =>
                 options.UseSqlServer(this.Configuration.GetConnectionString("Market")));
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, Data.Data.UnitOfWork>();
 
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<ICustomerService, CustomerService>();
-            services.AddScoped<IReceiptService, ReceiptService>();
-            services.AddScoped<IStatisticService, StatisticService>();
+            services.AddScoped<IProductService, Business.Services.ProductService>();
+            services.AddScoped<ICustomerService, Business.Services.CustomerService>();
+            services.AddScoped<IReceiptService, Business.Services.ReceiptService>();
+            services.AddScoped<IStatisticService, Business.Services.StatisticService>();
 
-            services.AddAutoMapper(typeof(AutomapperProfile).Assembly);
+            services.AddAutoMapper(typeof(Data.AutomapperProfile).Assembly);
 
             services.AddSwaggerGen(c =>
             {
