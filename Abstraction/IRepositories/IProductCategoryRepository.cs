@@ -1,9 +1,8 @@
-﻿using Abstraction.Models;
+﻿using Abstraction.IEntities;
 
 namespace Abstraction.IRepositories
 {
-    public interface IProductCategoryRepository : IRepository<ProductCategoryModel
-        >
+    public interface IProductCategoryRepository : IRepository<IProductCategory>
     {
     }
 }

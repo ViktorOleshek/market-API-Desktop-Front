@@ -1,11 +1,11 @@
-﻿using Abstraction.Models;
+﻿using Abstraction.IEntities;
 
 namespace Abstraction.IRepositories
 {
-    public interface ICustomerRepository : IRepository<CustomerModel>
+    public interface ICustomerRepository : IRepository<ICustomer>
     {
-        Task<IEnumerable<CustomerModel>> GetAllWithDetailsAsync();
+        Task<IEnumerable<ICustomer>> GetAllWithDetailsAsync();
 
-        Task<CustomerModel> GetByIdWithDetailsAsync(int id);
+        Task<ICustomer> GetByIdWithDetailsAsync(int id);
     }
 }

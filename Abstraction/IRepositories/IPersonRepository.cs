@@ -1,6 +1,8 @@
-﻿namespace Abstraction.IRepositories
+﻿using Abstraction.IEntities;
+
+namespace Abstraction.IRepositories
 {
-    public interface IPersonRepository/* : IRepository<Person>*/
+    public interface IPersonRepository : IRepository<IPerson>
     {
     }
 }
