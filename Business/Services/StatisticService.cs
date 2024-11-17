@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IEntities;
 using Abstraction.IRepositories;
 using Abstraction.IServices;
 using Abstraction.Models;
@@ -10,11 +12,23 @@ using Business.Validation;
 
 namespace Business.Services
 {
-    public class StatisticService : AbstractService<ReceiptModel>, IStatisticService
+    public class StatisticService : AbstractService<ReceiptModel, IReceipt>, IStatisticService
     {
-        public StatisticService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        public StatisticService(IUnitOfWork unitOfWork, IMapper mapper)
+            : base(unitOfWork, mapper, unitOfWork.ReceiptRepository)
         {
+        }
+
+        public virtual async Task<IEnumerable<ReceiptModel>> GetAllAsync()
+        {
+            var entities = await this.UnitOfWork.ReceiptRepository.GetAllWithDetailsAsync();
+            return this.Mapper.Map<IEnumerable<ReceiptModel>>(entities);
+        }
+
+        public virtual async Task<ReceiptModel> GetByIdAsync(int id)
+        {
+            var entity = await this.UnitOfWork.ReceiptRepository.GetByIdWithDetailsAsync(id);
+            return this.Mapper.Map<ReceiptModel>(entity);
         }
 
         public async Task<IEnumerable<ProductModel>> GetCustomersMostPopularProductsAsync(int productCount, int customerId)
@@ -29,7 +43,7 @@ namespace Business.Services
                 .Take(productCount)
                 .Select(g => g.Key);
 
-            return popularProducts;
+            return this.Mapper.Map<IEnumerable<ProductModel>>(popularProducts);
         }
 
         public async Task<decimal> GetIncomeOfCategoryInPeriod(int categoryId, DateTime startDate, DateTime endDate)
@@ -55,7 +69,7 @@ namespace Business.Services
                 .Take(productCount)
                 .Select(g => g.Key);
 
-            return mostPopularProducts;
+            return this.Mapper.Map<IEnumerable<ProductModel>>(mostPopularProducts);
         }
 
         public async Task<IEnumerable<CustomerActivityModel>> GetMostValuableCustomersAsync(int customerCount, DateTime startDate, DateTime endDate)
@@ -75,11 +89,6 @@ namespace Business.Services
                 .Take(customerCount);
 
             return mostValuableCustomers;
-        }
-
-        protected override IReceiptRepository GetRepository()
-        {
-            return this.UnitOfWork.ReceiptRepository;
         }
 
         protected override void Validation(ReceiptModel model)

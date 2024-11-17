@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IEntities;
 using Abstraction.IRepositories;
 using Abstraction.IServices;
 using Abstraction.Models;
@@ -10,18 +12,30 @@ using Business.Validation;
 
 namespace Business.Services
 {
-    public class ReceiptService : AbstractService<ReceiptModel>, IReceiptService
+    public class ReceiptService : AbstractService<ReceiptModel, IReceipt>, IReceiptService
     {
-        public ReceiptService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        public ReceiptService(IUnitOfWork unitOfWork, IMapper mapper)
+            : base(unitOfWork, mapper, unitOfWork.ReceiptRepository)
         {
+        }
+
+        public virtual async Task<IEnumerable<ReceiptModel>> GetAllAsync()
+        {
+            var entities = await this.UnitOfWork.ReceiptRepository.GetAllWithDetailsAsync();
+            return this.Mapper.Map<IEnumerable<ReceiptModel>>(entities);
+        }
+
+        public virtual async Task<ReceiptModel> GetByIdAsync(int id)
+        {
+            var entity = await this.UnitOfWork.ReceiptRepository.GetByIdWithDetailsAsync(id);
+            return this.Mapper.Map<ReceiptModel>(entity);
         }
 
         public async Task AddProductAsync(int productId, int receiptId, int quantity)
         {
             var receipt = await this.UnitOfWork.ReceiptRepository.GetByIdWithDetailsAsync(receiptId) ?? throw new MarketException();
 
-            ReceiptDetail receiptDetail = receipt.ReceiptDetails?.FirstOrDefault(rd => rd.ProductId == productId);
+            IReceiptDetail receiptDetail = receipt.ReceiptDetails?.FirstOrDefault(rd => rd.ProductId == productId);
 
             if (receiptDetail == null)
             {
@@ -29,16 +43,16 @@ namespace Business.Services
                     ?? throw new MarketException($"Product with id {productId} not found.");
 
                 var discountUnitPrice = Math.Round(product.Price * (100 - receipt.Customer.DiscountValue) / 100m, 2);
-                var newDetail = new ReceiptDetail
-                {
-                    ReceiptId = receiptId,
-                    ProductId = productId,
-                    DiscountUnitPrice = discountUnitPrice,
-                    UnitPrice = product.Price,
-                    Quantity = quantity,
-                };
+                //var newDetail = new ReceiptDetail
+                //{
+                //    ReceiptId = receiptId,
+                //    ProductId = productId,
+                //    DiscountUnitPrice = discountUnitPrice,
+                //    UnitPrice = product.Price,
+                //    Quantity = quantity,
+                //};
 
-                await this.UnitOfWork.ReceiptDetailRepository.AddAsync(newDetail);
+                //await this.UnitOfWork.ReceiptDetailRepository.AddAsync(newDetail);
             }
             else
             {
@@ -71,7 +85,8 @@ namespace Business.Services
                 ?? throw new MarketException("No receipts found within the specified period.");
 
             var filteredReceipts = receipts.Where(r => r.OperationDate > startDate && r.OperationDate < endDate).ToList();
-            return filteredReceipts;
+
+            return this.Mapper.Map<IEnumerable<ReceiptModel>>(filteredReceipts);
         }
 
         public async Task RemoveProductAsync(int productId, int receiptId, int quantity)
@@ -112,23 +127,8 @@ namespace Business.Services
                 this.UnitOfWork.ReceiptDetailRepository.Delete(receiptDetail);
             }
 
-            await this.GetRepository().DeleteByIdAsync(modelId);
+            await this.UnitOfWork.ReceiptRepository.DeleteByIdAsync(modelId);
             await this.UnitOfWork.SaveAsync();
-        }
-
-        public async Task<IEnumerable<ReceiptModel>> GetAllAsync()
-        {
-            return await this.UnitOfWork.ReceiptRepository.GetAllWithDetailsAsync();
-        }
-
-        public async Task<ReceiptModel> GetByIdAsync(int id)
-        {
-            return await this.UnitOfWork.ReceiptRepository.GetByIdWithDetailsAsync(id);
-        }
-
-        protected override IReceiptRepository GetRepository()
-        {
-            return this.UnitOfWork.ReceiptRepository;
         }
 
         protected override void Validation(ReceiptModel model)
