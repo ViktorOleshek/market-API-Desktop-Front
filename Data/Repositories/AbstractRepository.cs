@@ -3,53 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Abstraction.Models;
-using AutoMapper;
+using Abstraction.IEntities;
+using Abstraction.IRepositories;
 using Data.Data;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
-    public abstract class AbstractRepository<TEntity, TModel>
-        where TEntity : BaseEntity
-        where TModel : BaseModel
+    public abstract class AbstractRepository<TBaseEntity>
+        where TBaseEntity : class, IBaseEntity
     {
-        private readonly IMapper mapper;
-
-        protected AbstractRepository(TradeMarketDbContext context, IMapper mapper)
+        protected AbstractRepository(TradeMarketDbContext context)
         {
             this.Context = context;
-            this.mapper = mapper;
         }
 
         protected TradeMarketDbContext Context { get; }
 
-        protected IMapper Mapper => this.mapper;
-
-        public async Task<IEnumerable<TModel>> GetAllAsync()
+        public async Task<IEnumerable<TBaseEntity>> GetAllAsync()
         {
-            var result = await this.Context.Set<TEntity>().ToListAsync();
-            return this.Mapper.Map<IEnumerable<TModel>>(result);
+            return await this.Context.Set<TBaseEntity>().ToListAsync();
         }
 
-        public async Task<TModel> GetByIdAsync(int id)
-        {
-            var entity = await this.Context.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == id);
-            return this.Mapper.Map<TModel>(entity);
-        }
+        public Task<TBaseEntity> GetByIdAsync(int id) =>
+            this.Context.Set<TBaseEntity>().FirstOrDefaultAsync(x => x.Id == id);
 
-        public async Task AddAsync(TModel model)
-        {
-            var entity = this.Mapper.Map<TEntity>(model);
-            await this.Context.AddAsync(entity);
-        }
+        public Task AddAsync(TBaseEntity entity) =>
+            this.Context.AddAsync(entity).AsTask();
 
-        public void Delete(TModel model)
-        {
-            var entity = this.Mapper.Map<TEntity>(model);
+        public void Delete(TBaseEntity entity) =>
             this.Context.Remove(entity);
-        }
 
         public virtual async Task DeleteByIdAsync(int id)
         {
@@ -63,10 +47,7 @@ namespace Data.Repositories
             }
         }
 
-        public void Update(TModel model)
-        {
-            var entity = this.Mapper.Map<TEntity>(model);
+        public void Update(TBaseEntity entity) =>
             this.Context.Update(entity);
-        }
     }
 }

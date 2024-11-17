@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IEntities;
 using Abstraction.IRepositories;
-using Abstraction.Models;
-using AutoMapper;
 using Data.Data;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
-    public class PersonRepository : AbstractRepository<Person, CustomerModel>, IPersonRepository
+    public class PersonRepository : AbstractRepository<IPerson>, IPersonRepository
     {
-        public PersonRepository(TradeMarketDbContext context, IMapper mapper)
-            : base(context, mapper)
+        public PersonRepository(TradeMarketDbContext context)
+            : base(context)
         {
             ArgumentNullException.ThrowIfNull(context);
         }
