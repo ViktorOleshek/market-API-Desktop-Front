@@ -42,7 +42,7 @@ namespace WebApi
             services.AddScoped<IReceiptService, Business.Services.ReceiptService>();
             services.AddScoped<IStatisticService, Business.Services.StatisticService>();
 
-            services.AddAutoMapper(typeof(Data.AutomapperProfile).Assembly);
+            services.AddAutoMapper(typeof(Business.AutomapperProfile).Assembly);
 
             services.AddSwaggerGen(c =>
             {
