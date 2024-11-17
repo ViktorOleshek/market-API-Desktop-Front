@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IEntities;
 
 namespace Data.Entities
 {
     [Table("Person")]
-    public class Person : BaseEntity
+    public class Person : BaseEntity, IPerson
     {
         public Person()
             : base()

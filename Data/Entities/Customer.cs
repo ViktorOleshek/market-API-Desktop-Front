@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IEntities;
 
 namespace Data.Entities
 {
     [Table("Customer")]
-    public class Customer : BaseEntity
+    public class Customer : BaseEntity, ICustomer
     {
         public Customer()
             : base()
@@ -26,6 +27,18 @@ namespace Data.Entities
 
         public virtual Person Person { get; set; }
 
+        IPerson ICustomer.Person
+        {
+            get => this.Person;
+            set => this.Person = (Person)value;
+        }
+
         public virtual ICollection<Receipt> Receipts { get; init; }
+
+        ICollection<IReceipt> ICustomer.Receipts
+        {
+            get => this.Receipts as ICollection<IReceipt>;
+            init => this.Receipts = (ICollection<Receipt>)value;
+        }
     }
 }

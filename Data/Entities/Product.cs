@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IEntities;
 
 namespace Data.Entities
 {
     [Table("Product")]
-    public class Product : BaseEntity
+    public class Product : BaseEntity, IProduct
     {
         public Product()
             : base()
@@ -33,5 +34,17 @@ namespace Data.Entities
         public virtual ProductCategory Category { get; set; }
 
         public virtual ICollection<ReceiptDetail> ReceiptDetails { get; init; }
+
+        IProductCategory IProduct.Category
+        {
+            get => this.Category;
+            set => this.Category = value as ProductCategory ?? throw new ArgumentException("Value must be of type ProductCategory");
+        }
+
+        ICollection<IReceiptDetail> IProduct.ReceiptDetails
+        {
+            get => this.ReceiptDetails.Cast<IReceiptDetail>().ToList();
+            init => this.ReceiptDetails = value.Select(rd => rd as ReceiptDetail).Where(rd => rd != null).ToList();
+        }
     }
 }

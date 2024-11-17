@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Abstraction.IEntities;
 
 namespace Data.Entities
 {
     [Table("Receipt")]
-    public class Receipt : BaseEntity
+    public class Receipt : BaseEntity, IReceipt
     {
         public Receipt()
             : base()
@@ -29,5 +30,17 @@ namespace Data.Entities
         public virtual Customer Customer { get; set; }
 
         public virtual ICollection<ReceiptDetail> ReceiptDetails { get; init; }
+
+        ICustomer IReceipt.Customer
+        {
+            get => this.Customer;
+            set => this.Customer = value as Customer ?? throw new ArgumentException("Value must be of type Customer");
+        }
+
+        ICollection<IReceiptDetail> IReceipt.ReceiptDetails
+        {
+            get => this.ReceiptDetails.Cast<IReceiptDetail>().ToList();
+            init => this.ReceiptDetails = value.Select(rd => rd as ReceiptDetail).Where(rd => rd != null).ToList();
+        }
     }
 }
