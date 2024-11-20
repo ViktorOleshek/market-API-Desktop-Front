@@ -18,6 +18,7 @@ namespace WebApi
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
+    using MongoDB.Driver;
 
     public class Startup
     {
@@ -32,10 +33,18 @@ namespace WebApi
         {
             services.AddControllers();
 
-            services.AddDbContext<Data.Data.TradeMarketDbContext>(options =>
-                options.UseSqlServer(this.Configuration.GetConnectionString("Market")));
+            // SQL Server configuration
+            //services.AddDbContext<Data.Data.TradeMarketDbContext>(options =>
+            //    options.UseSqlServer(this.Configuration.GetConnectionString("Market")));
+            //services.AddScoped<IUnitOfWork, Data.Data.UnitOfWork>();
 
-            services.AddScoped<IUnitOfWork, Data.Data.UnitOfWork>();
+            // MongoDB configuration
+            var mongoConnectionString = this.Configuration.GetConnectionString("MongoMarket");
+            var mongoClient = new MongoClient(mongoConnectionString);
+            var mongoDatabase = mongoClient.GetDatabase("TradeMarket");
+
+            services.AddSingleton<IMongoDatabase>(mongoDatabase);
+            services.AddScoped<IUnitOfWork, DalMongoDB.Data.UnitOfWork>();
 
             services.AddScoped<IProductService, Business.Services.ProductService>();
             services.AddScoped<ICustomerService, Business.Services.CustomerService>();
