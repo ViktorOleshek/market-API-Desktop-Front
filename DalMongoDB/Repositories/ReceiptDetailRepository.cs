@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Abstraction.IEntities;
+﻿using Abstraction.IEntities;
 using Abstraction.IRepositories;
 using MongoDB.Driver;
-using DalMongoDB.Entities;
+using DalMongoDB.Mappers;
 
 namespace DalMongoDB.Repositories
 {
@@ -19,26 +16,32 @@ namespace DalMongoDB.Repositories
         public async Task<IEnumerable<IReceiptDetail>> GetAllWithDetailsAsync()
         {
             var receiptDetailCollection = this.Collection;
-            var productCollectionName = "Products"; // Collection name as a string
-            var receiptCollectionName = "Receipts"; // Collection name as a string
+            var productCollectionName = "Products";
+            var receiptCollectionName = "Receipts";
 
             var aggregation = await receiptDetailCollection.Aggregate()
                 .Lookup(
-                    foreignCollectionName: productCollectionName, // Name of the "foreign" collection
-                    localField: "ProductId", // Field in ReceiptDetail to match
-                    foreignField: "Id", // Field in Product to match
-                    @as: "ProductDetails" // Output alias
+                    foreignCollectionName: productCollectionName,
+                    localField: "ProductId",
+                    foreignField: "Id",
+                    @as: "ProductDetails"
                 )
                 .Lookup(
-                    foreignCollectionName: receiptCollectionName, // Name of the "foreign" collection
-                    localField: "ReceiptId", // Field in ReceiptDetail to match
-                    foreignField: "Id", // Field in Receipt to match
-                    @as: "ReceiptDetails" // Output alias
+                    foreignCollectionName: receiptCollectionName,
+                    localField: "ReceiptId",
+                    foreignField: "Id",
+                    @as: "ReceiptDetails" 
                 )
                 .ToListAsync();
 
-            return (IEnumerable<IReceiptDetail>)aggregation;
-        }
+            var result = new List<IReceiptDetail>();
+            foreach (var item in aggregation)
+            {
+                var receiptDetail = EntityMapper.MapToReceiptDetail(item);
+                result.Add(receiptDetail);
+            }
 
+            return result;
+        }
     }
 }

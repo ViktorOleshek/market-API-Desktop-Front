@@ -33,7 +33,7 @@ namespace DalMongoDB.Entities
 
         public virtual ProductCategory Category { get; set; }
 
-        public virtual ICollection<ReceiptDetail> ReceiptDetails { get; init; }
+        public virtual ICollection<ReceiptDetail> ReceiptDetails { get; set; }
 
         IProductCategory IProduct.Category
         {

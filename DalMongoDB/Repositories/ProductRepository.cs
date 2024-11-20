@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Abstraction.IEntities;
+﻿using Abstraction.IEntities;
 using Abstraction.IRepositories;
-using DalMongoDB.Data;
-using DalMongoDB.Entities;
+using DalMongoDB.Mappers;
 using MongoDB.Driver;
 
 namespace DalMongoDB.Repositories
@@ -26,19 +22,26 @@ namespace DalMongoDB.Repositories
             var aggregation = await productCollection.Aggregate()
                 .Lookup(
                     foreignCollectionName: receiptDetailCollectionName,
-                    localField: "Id",  // Product's Id matches with ReceiptDetail's ProductId
-                    foreignField: "ProductId", // Field in ReceiptDetail that references Product's Id
+                    localField: "Id",
+                    foreignField: "ProductId",
                     @as: "ReceiptDetails"
                 )
                 .Lookup(
                     foreignCollectionName: categoryCollectionName,
-                    localField: "CategoryId", // Product's CategoryId matches Category's Id
-                    foreignField: "Id", // Category's Id
+                    localField: "CategoryId",
+                    foreignField: "Id",
                     @as: "CategoryDetails"
                 )
                 .ToListAsync();
 
-            return (IEnumerable<IProduct>)aggregation;
+            var result = new List<IProduct>();
+            foreach (var item in aggregation)
+            {
+                var product = EntityMapper.MapToProduct(item);
+                result.Add(product);
+            }
+
+            return result;
         }
 
         public async Task<IProduct> GetByIdWithDetailsAsync(int id)
@@ -48,22 +51,22 @@ namespace DalMongoDB.Repositories
             var categoryCollectionName = "Categories";
 
             var aggregation = await productCollection.Aggregate()
-                .Match(p => p.Id == id) // Match the product by Id
+                .Match(p => p.Id == id)
                 .Lookup(
                     foreignCollectionName: receiptDetailCollectionName,
-                    localField: "Id",  // Product's Id matches with ReceiptDetail's ProductId
-                    foreignField: "ProductId", // Field in ReceiptDetail that references Product's Id
+                    localField: "Id",
+                    foreignField: "ProductId",
                     @as: "ReceiptDetails"
                 )
                 .Lookup(
                     foreignCollectionName: categoryCollectionName,
-                    localField: "CategoryId", // Product's CategoryId matches Category's Id
-                    foreignField: "Id", // Category's Id
+                    localField: "CategoryId",
+                    foreignField: "Id",
                     @as: "CategoryDetails"
                 )
-                .FirstOrDefaultAsync(); // Only return the first match (since it's a single product)
+                .FirstOrDefaultAsync();
 
-            return (IProduct)aggregation;
+            return EntityMapper.MapToProduct(aggregation);
         }
     }
 }
