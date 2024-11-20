@@ -16,7 +16,6 @@ namespace DalMongoDB.Data
         public TradeMarketDbContext(IMongoClient mongoClient, string databaseName)
         {
             this.database = mongoClient.GetDatabase(databaseName);
-            //InitializeCollections();
         }
 
         public IMongoDatabase Database => this.database;
@@ -27,30 +26,5 @@ namespace DalMongoDB.Data
         public IMongoCollection<ProductCategory> ProductCategories => database.GetCollection<ProductCategory>("ProductCategories");
         public IMongoCollection<Receipt> Receipts => database.GetCollection<Receipt>("Receipts");
         public IMongoCollection<ReceiptDetail> ReceiptsDetails => database.GetCollection<ReceiptDetail>("ReceiptDetails");
-
-        //private void InitializeCollections()
-        //{
-        //    CreateCollectionIfNotExists<Customer>("Customers");
-        //    CreateCollectionIfNotExists<Person>("Persons");
-        //    CreateCollectionIfNotExists<Product>("Products");
-        //    CreateCollectionIfNotExists<ProductCategory>("ProductCategories");
-        //    CreateCollectionIfNotExists<Receipt>("Receipts");
-        //    CreateCollectionIfNotExists<ReceiptDetail>("ReceiptDetails");
-        //}
-
-        //private void CreateCollectionIfNotExists<T>(string collectionName)
-        //{
-        //    var collections = database.ListCollectionNames().ToList();
-
-        //    if (!collections.Contains(collectionName))
-        //    {
-        //        database.CreateCollection(collectionName);
-        //        Console.WriteLine($"Collection {collectionName} is created.");
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine($"Collection {collectionName} is already існує.");
-        //    }
-        //}
     }
 }
