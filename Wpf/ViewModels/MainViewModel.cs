@@ -2,7 +2,7 @@
 using System.Net.Http;
 using Wpf.ViewModels;
 
-namespace WPF.ViewModels
+namespace Wpf.ViewModels
 {
 	public class MainViewModel
 	{
