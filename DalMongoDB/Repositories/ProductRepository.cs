@@ -1,5 +1,6 @@
 ﻿using Abstraction.IEntities;
 using Abstraction.IRepositories;
+using DalMongoDB.Entities;
 using DalMongoDB.Mappers;
 using MongoDB.Driver;
 
@@ -11,6 +12,11 @@ namespace DalMongoDB.Repositories
             : base(database, "Products")
         {
             ArgumentNullException.ThrowIfNull(database);
+        }
+
+        public IProduct CreateEntity()
+        {
+            return new Product { Category = new ProductCategory() };
         }
 
         public async Task<IEnumerable<IProduct>> GetAllWithDetailsAsync()

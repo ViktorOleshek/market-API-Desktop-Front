@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abstraction.IEntities;
-using Abstraction.IRepositories;
 using Data.Data;
-using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
@@ -49,5 +44,7 @@ namespace Data.Repositories
 
         public void Update(TBaseEntity entity) =>
             this.Context.Update(entity);
+
+        public abstract TBaseEntity CreateEntity();
     }
 }

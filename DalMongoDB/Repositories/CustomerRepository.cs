@@ -1,5 +1,6 @@
 ﻿using Abstraction.IEntities;
 using Abstraction.IRepositories;
+using DalMongoDB.Entities;
 using DalMongoDB.Mappers;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -12,6 +13,11 @@ namespace DalMongoDB.Repositories
             : base(database, "Customers")
         {
             ArgumentNullException.ThrowIfNull(database);
+        }
+
+        public ICustomer CreateEntity()
+        {
+            return new Customer { Person = new Person() };
         }
 
         public async Task<IEnumerable<ICustomer>> GetAllWithDetailsAsync()
@@ -37,7 +43,7 @@ namespace DalMongoDB.Repositories
 
         public async Task<ICustomer> GetByIdWithDetailsAsync(int id)
         {
-            var pipeline = new[]
+            var pipeline = new []
             {
                 new BsonDocument("$match", new BsonDocument("_id", id)),
                 new BsonDocument("$lookup", new BsonDocument

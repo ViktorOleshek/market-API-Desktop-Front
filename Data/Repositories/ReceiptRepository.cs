@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abstraction.IEntities;
 using Abstraction.IRepositories;
@@ -17,6 +15,11 @@ namespace Data.Repositories
             : base(context)
         {
             ArgumentNullException.ThrowIfNull(context);
+        }
+
+        public override IReceipt CreateEntity()
+        {
+            return new Receipt();
         }
 
         public async Task<IEnumerable<IReceipt>> GetAllWithDetailsAsync()
