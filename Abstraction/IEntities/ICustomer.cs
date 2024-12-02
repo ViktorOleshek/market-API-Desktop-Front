@@ -11,6 +11,7 @@ namespace Abstraction.IEntities
         public int PersonId { get; set; }
 
         public int DiscountValue { get; set; }
+        public byte []? Photo { get; set; }
         public IPerson Person { get; set; }
         public ICollection<IReceipt> Receipts { get; init; }
     }

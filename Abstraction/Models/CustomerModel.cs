@@ -30,6 +30,8 @@ namespace Abstraction.Models
 
         public int DiscountValue { get; set; }
 
+        public byte []? Photo { get; set; }
+
         public virtual ICollection<int> ReceiptsIds { get; set; }
     }
 }
