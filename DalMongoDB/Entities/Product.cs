@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Abstraction.IEntities;
 
 namespace DalMongoDB.Entities
@@ -14,11 +9,13 @@ namespace DalMongoDB.Entities
         public Product()
             : base()
         {
+            this.Category = new ProductCategory();
         }
 
         public Product(int id)
             : base(id)
         {
+            this.Category = new ProductCategory();
         }
 
         [Column("ProductCategoryId")]

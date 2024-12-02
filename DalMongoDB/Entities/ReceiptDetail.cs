@@ -1,16 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using Abstraction.IEntities;
-using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using Abstraction.IEntities;
 
 namespace DalMongoDB.Entities
 {
     public class ReceiptDetail : BaseEntity, IReceiptDetail
     {
-        public ReceiptDetail() : base() { }
+        public ReceiptDetail()
+            : base()
+        {
+            this.Receipt = new Receipt();
+            this.Product = new Product();
+        }
 
-        public ReceiptDetail(int id) : base(id) { }
+        public ReceiptDetail(int id)
+            : base(id)
+        {
+            this.Receipt = new Receipt();
+            this.Product = new Product();
+        }
 
         public int ReceiptId { get; set; }
         public int ProductId { get; set; }

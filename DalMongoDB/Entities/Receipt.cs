@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Abstraction.IEntities;
 
 namespace DalMongoDB.Entities
@@ -14,11 +9,13 @@ namespace DalMongoDB.Entities
         public Receipt()
             : base()
         {
+            this.Customer = new Customer();
         }
 
         public Receipt(int id)
             : base(id)
         {
+            this.Customer = new Customer();
         }
 
         public int CustomerId { get; set; }

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abstraction.IEntities;
 
 namespace Data.Entities
@@ -14,11 +12,13 @@ namespace Data.Entities
         public Product()
             : base()
         {
+            Category = new ProductCategory();
         }
 
         public Product(int id)
             : base(id)
         {
+            Category = new ProductCategory();
         }
 
         [Column("ProductCategoryId")]

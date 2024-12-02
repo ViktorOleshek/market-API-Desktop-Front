@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abstraction.IEntities;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,11 +12,15 @@ namespace Data.Entities
         public ReceiptDetail()
             : base()
         {
+            Receipt = new Receipt();
+            Product = new Product();
         }
 
         public ReceiptDetail(int id)
             : base(id)
         {
+            Receipt = new Receipt();
+            Product = new Product();
         }
 
         [ForeignKey(nameof(Receipt))]

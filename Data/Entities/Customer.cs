@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abstraction.IEntities;
 
 namespace Data.Entities
@@ -14,11 +10,13 @@ namespace Data.Entities
         public Customer()
             : base()
         {
+            this.Person = new Person();
         }
 
         public Customer(int id)
             : base(id)
         {
+            this.Person = new Person();
         }
 
         public int PersonId { get; set; }
@@ -40,5 +38,11 @@ namespace Data.Entities
             get => this.Receipts as ICollection<IReceipt>;
             init => this.Receipts = (ICollection<Receipt>)value;
         }
+
+#pragma warning disable SA1010
+#pragma warning disable SA1011
+        public byte []? Photo { get; set; }
+#pragma warning restore SA1011
+#pragma warning restore SA1010
     }
 }
