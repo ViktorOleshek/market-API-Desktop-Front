@@ -1,6 +1,4 @@
 ﻿using Abstraction.IEntities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Abstraction.IRepositories
 {
@@ -18,5 +16,7 @@ namespace Abstraction.IRepositories
         Task DeleteByIdAsync(int id);
 
         void Update(TEntity entity);
+
+        TEntity CreateEntity();
     }
 }
