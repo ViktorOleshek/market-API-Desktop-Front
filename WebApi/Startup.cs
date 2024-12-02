@@ -1,24 +1,14 @@
 namespace WebApi
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Abstraction.IRepositories;
     using Abstraction.IServices;
-    using Abstraction.Models;
-    using AutoMapper;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.HttpsPolicy;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
-    using MongoDB.Driver;
 
     public class Startup
     {
@@ -33,18 +23,28 @@ namespace WebApi
         {
             services.AddControllers();
 
+            // CORS configuration
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAnyOrigin", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             // SQL Server configuration
-            //services.AddDbContext<Data.Data.TradeMarketDbContext>(options =>
-            //    options.UseSqlServer(this.Configuration.GetConnectionString("Market")));
-            //services.AddScoped<IUnitOfWork, Data.Data.UnitOfWork>();
+            services.AddDbContext<Data.Data.TradeMarketDbContext>(options =>
+                options.UseSqlServer(this.Configuration.GetConnectionString("Market")));
+            services.AddScoped<IUnitOfWork, Data.Data.UnitOfWork>();
 
             // MongoDB configuration
-            var mongoConnectionString = this.Configuration.GetConnectionString("MongoMarket");
-            var mongoClient = new MongoClient(mongoConnectionString);
-            var mongoDatabase = mongoClient.GetDatabase("TradeMarket");
-
-            services.AddSingleton<IMongoDatabase>(mongoDatabase);
-            services.AddScoped<IUnitOfWork, DalMongoDB.Data.UnitOfWork>();
+            //var mongoConnectionString = this.Configuration.GetConnectionString("MongoMarket");
+            //var mongoClient = new MongoClient(mongoConnectionString);
+            //var mongoDatabase = mongoClient.GetDatabase("TradeMarket");
+            //services.AddSingleton<IMongoDatabase>(mongoDatabase);
+            //services.AddScoped<IUnitOfWork, DalMongoDB.Data.UnitOfWork>();
 
             services.AddScoped<IProductService, Business.Services.ProductService>();
             services.AddScoped<ICustomerService, Business.Services.CustomerService>();
@@ -70,6 +70,10 @@ namespace WebApi
 
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            // Use CORS
+            app.UseCors("AllowAnyOrigin");
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
