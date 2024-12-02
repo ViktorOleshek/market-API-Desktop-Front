@@ -64,7 +64,6 @@ namespace DalMongoDB.Mappers
             };
         }
 
-        // Мапінг динамічного результату агрегації в ReceiptDetail
         public static IReceiptDetail MapToReceiptDetail(dynamic item)
         {
             var receiptDetail = new ReceiptDetail
@@ -104,7 +103,6 @@ namespace DalMongoDB.Mappers
             return receiptDetail;
         }
 
-        // Мапінг динамічного результату агрегації в Product
         public static IProduct MapToProduct(dynamic item)
         {
             var product = new Product
@@ -115,10 +113,9 @@ namespace DalMongoDB.Mappers
                 ProductCategoryId = item.CategoryId
             };
 
-            // Мапінг зв'язаних ReceiptDetails
             if (item.ReceiptDetails != null)
             {
-                var receiptDetailsList = new List<ReceiptDetail>(); // Список ReceiptDetail
+                var receiptDetailsList = new List<ReceiptDetail>();
                 foreach (var receiptDetail in item.ReceiptDetails)
                 {
                     receiptDetailsList.Add(new ReceiptDetail
@@ -131,13 +128,12 @@ namespace DalMongoDB.Mappers
                         UnitPrice = receiptDetail.UnitPrice
                     });
                 }
-                product.ReceiptDetails = receiptDetailsList;  // Приведення до правильного типу
+                product.ReceiptDetails = receiptDetailsList;
             }
 
-            // Мапінг зв'язаних CategoryDetails
             if (item.CategoryDetails != null && item.CategoryDetails.Count > 0)
             {
-                var category = item.CategoryDetails [0]; // Припускаємо, що один продукт має одну категорію
+                var category = item.CategoryDetails [0];
                 product.Category = new ProductCategory
                 {
                     Id = category.Id,
