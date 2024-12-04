@@ -1,0 +1,43 @@
+<div class="receipt-list container my-4 p-4 bg-white rounded shadow-sm">
+  <h2 class="text-center mb-4">Receipts</h2>
+
+  <!-- Wrapper для горизонтальної прокрутки -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="thead-dark">
+      <tr>
+        <th>Id</th>
+        <th>Customer Id</th>
+        <th>Operation Date</th>
+        <th>Checked Out</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let receipt of paginatedReceipts">
+        <td>{{ receipt.id }}</td>
+        <td>{{ receipt.customerId }}</td>
+        <td>{{ receipt.operationDate }}</td>
+        <td>{{ receipt.isCheckedOut ? 'Yes' : 'No' }}</td>
+        <td>
+          <button (click)="editReceipt(receipt.id)" class="btn btn-success btn-sm">
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button (click)="deleteReceipt(receipt.id)" class="btn btn-danger btn-sm">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <div>
+      <button (click)="prevPage()" [disabled]="currentPage === 1" class="btn btn-secondary btn-sm">Previous</button>
+      <span class="mx-2">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary btn-sm">Next</button>
+    </div>
+    <button (click)="addReceipt()" class="btn btn-primary btn-sm">Add Receipt</button>
+  </div>
+</div>
