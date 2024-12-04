@@ -17,7 +17,7 @@
       <tr *ngFor="let receipt of paginatedReceipts">
         <td>{{ receipt.id }}</td>
         <td>{{ receipt.customerId }}</td>
-        <td>{{ receipt.operationDate }}</td>
+        <td>{{ receipt.operationDate | formatDate }}</td>
         <td>{{ receipt.isCheckedOut ? 'Yes' : 'No' }}</td>
         <td>
           <button (click)="editReceipt(receipt.id)" class="btn btn-success btn-sm">

@@ -4,12 +4,14 @@ import { Receipt } from '../../../shared/models/receipt';
 import { Router } from '@angular/router';
 import {NgForOf} from '@angular/common';
 import {Customer} from '../../../shared/models/customer';
+import {FormatDatePipe} from '../../../shared/pipes/format-date.pipe';
 
 @Component({
   selector: 'app-receipt-list',
   templateUrl: './receipt-list.component.html',
   imports: [
-    NgForOf
+    NgForOf,
+    FormatDatePipe
   ],
   styleUrls: ['./receipt-list.component.css']
 })

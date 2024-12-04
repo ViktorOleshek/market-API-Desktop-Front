@@ -19,7 +19,7 @@
         <td>{{ customer.id }}</td>
         <td>{{ customer.name }}</td>
         <td>{{ customer.surname }}</td>
-        <td>{{ customer.birthDate }}</td>
+        <td>{{ customer.birthDate | formatDate }}</td>
         <td>{{ customer.discountValue }}%</td>
         <td>
           <button (click)="editCustomer(customer.id)" class="btn btn-success btn-sm">

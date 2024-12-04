@@ -3,12 +3,14 @@ import { CustomerService } from '../../../shared/services/customer.service';
 import { Customer } from '../../../shared/models/customer';
 import { Router } from '@angular/router';
 import {NgForOf} from '@angular/common';
+import {FormatDatePipe} from '../../../shared/pipes/format-date.pipe';
 
 @Component({
   selector: 'app-customer-list',
   templateUrl: './customer-list.component.html',
   imports: [
-    NgForOf
+    NgForOf,
+    FormatDatePipe
   ],
   styleUrls: ['./customer-list.component.css']
 })
