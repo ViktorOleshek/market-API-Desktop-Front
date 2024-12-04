@@ -1,0 +1,33 @@
+body {
+  background: #f8f9fa;
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  height: 100vh;
+}
+
+h1 {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+
+.nav-link {
+  padding: 0.75rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.nav-link.active {
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  background-color: #e9ecef;
+}
+
+/* Більш плавний перехід для бургер-меню */
+.collapse:not(.show) {
+  display: none;
+}
+
+.mt-md-5 {
+  margin-top: 3rem !important; /* щоб основний контент не перекривався */
+}
