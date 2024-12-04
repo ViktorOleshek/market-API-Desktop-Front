@@ -1,0 +1,28 @@
+<div class="customer-detail">
+  <h2>{{ customer.id === 0 ? 'Add New Customer' : 'Edit Customer' }}</h2>
+
+  <form (ngSubmit)="saveCustomer()">
+    <div>
+      <label for="name">Name</label>
+      <input type="text" id="name" [(ngModel)]="customer.name" name="name" required />
+    </div>
+
+    <div>
+      <label for="surname">Surname</label>
+      <input type="text" id="surname" [(ngModel)]="customer.surname" name="surname" required />
+    </div>
+
+    <div>
+      <label for="birthDate">Birth Date</label>
+      <input type="date" id="birthDate" [(ngModel)]="customer.birthDate" name="birthDate" required />
+    </div>
+
+    <div>
+      <label for="discountValue">Discount Value</label>
+      <input type="number" id="discountValue" [(ngModel)]="customer.discountValue" name="discountValue" />
+    </div>
+
+    <button type="submit">{{ customer.id === 0 ? 'Add' : 'Save' }}</button>
+    <button type="button" (click)="cancel()">Cancel</button>
+  </form>
+</div>
