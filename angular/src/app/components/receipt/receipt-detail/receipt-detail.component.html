@@ -1,0 +1,23 @@
+<div class="receipt-detail">
+  <h2>{{ receipt.id === 0 ? 'Add New Receipt' : 'Edit Receipt' }}</h2>
+
+  <form (ngSubmit)="saveReceipt()">
+    <div>
+      <label for="customerId">Customer</label>
+      <input type="number" id="customerId" [(ngModel)]="receipt.customerId" name="customerId" required />
+    </div>
+
+    <div>
+      <label for="operationDate">Operation Date</label>
+      <input type="date" id="operationDate" [(ngModel)]="receipt.operationDate" name="operationDate" required />
+    </div>
+
+    <div>
+      <label for="isCheckedOut">Checked Out</label>
+      <input type="checkbox" id="isCheckedOut" [(ngModel)]="receipt.isCheckedOut" name="isCheckedOut" />
+    </div>
+
+    <button type="submit">{{ receipt.id === 0 ? 'Add' : 'Save' }}</button>
+    <button type="button" (click)="cancel()">Cancel</button>
+  </form>
+</div>
