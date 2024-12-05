@@ -4,19 +4,24 @@ import { Customer } from '../../../shared/models/customer';
 import { Router } from '@angular/router';
 import {NgForOf} from '@angular/common';
 import {FormatDatePipe} from '../../../shared/pipes/format-date.pipe';
+import {SortPipe} from '../../../shared/pipes/sort.pipe';
 
 @Component({
   selector: 'app-customer-list',
   templateUrl: './customer-list.component.html',
   imports: [
     NgForOf,
-    FormatDatePipe
+    FormatDatePipe,
+    SortPipe,
   ],
   styleUrls: ['./customer-list.component.css']
 })
 export class CustomerListComponent implements OnInit {
   customers: Customer[] = [];
   paginatedCustomers: Customer[] = [];
+
+  sortField: string = '';
+  sortOrder: 'asc' | 'desc' = 'asc';
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
@@ -37,6 +42,24 @@ export class CustomerListComponent implements OnInit {
         console.error('Failed to load customers:', error);
       }
     );
+  }
+
+  toggleSort(field: string): void {
+    if (this.sortField === field) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortOrder = 'asc';
+    }
+  }
+
+  getSortIcon(field: string): string {
+    if (this.sortField === field) {
+      return this.sortOrder === 'asc'
+        ? '<i class="bi bi-sort-alpha-up"></i>'
+        : '<i class="bi bi-sort-alpha-down"></i>';
+    }
+    return '<i class="bi bi-sort"></i>';
   }
 
   updatePagination(): void {

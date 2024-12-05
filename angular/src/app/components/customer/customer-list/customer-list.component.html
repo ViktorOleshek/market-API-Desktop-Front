@@ -1,21 +1,30 @@
 <div class="customer-list container my-4 p-4 bg-white rounded shadow-sm">
   <h2 class="text-center mb-4">Customers</h2>
 
-  <!-- Wrapper для горизонтальної прокрутки -->
   <div class="table-responsive">
     <table class="table table-bordered table-hover">
       <thead class="thead-dark">
       <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Name</th>
-        <th scope="col">Surname</th>
-        <th scope="col">Birth Date</th>
-        <th scope="col">Discount</th>
+        <th scope="col" (click)="toggleSort('id')" class="cursor-pointer">
+          Id <span [innerHTML]="getSortIcon('id')"></span>
+        </th>
+        <th scope="col" (click)="toggleSort('name')" class="cursor-pointer">
+          Name <span [innerHTML]="getSortIcon('name')"></span>
+        </th>
+        <th scope="col" (click)="toggleSort('surname')" class="cursor-pointer">
+          Surname <span [innerHTML]="getSortIcon('surname')"></span>
+        </th>
+        <th scope="col" (click)="toggleSort('birthDate')" class="cursor-pointer">
+          Birth Date <span [innerHTML]="getSortIcon('birthDate')"></span>
+        </th>
+        <th scope="col" (click)="toggleSort('discountValue')" class="cursor-pointer">
+          Discount <span [innerHTML]="getSortIcon('discountValue')"></span>
+        </th>
         <th scope="col">Actions</th>
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let customer of paginatedCustomers">
+      <tr *ngFor="let customer of paginatedCustomers | sort:sortField:sortOrder">
         <td>{{ customer.id }}</td>
         <td>{{ customer.name }}</td>
         <td>{{ customer.surname }}</td>

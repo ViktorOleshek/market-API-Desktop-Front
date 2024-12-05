@@ -6,15 +6,23 @@
     <table class="table table-bordered table-hover">
       <thead class="thead-dark">
       <tr>
-        <th>Id</th>
-        <th>Customer Id</th>
-        <th>Operation Date</th>
-        <th>Checked Out</th>
+        <th scope="col" (click)="toggleSort('id')" class="cursor-pointer">
+          Id <span [innerHTML]="getSortIcon('id')"></span>
+        </th>
+        <th scope="col" (click)="toggleSort('customerId')" class="cursor-pointer">
+          Customer Id <span [innerHTML]="getSortIcon('customerId')"></span>
+        </th>
+        <th scope="col" (click)="toggleSort('operationDate')" class="cursor-pointer">
+          Operation Date <span [innerHTML]="getSortIcon('operationDate')"></span>
+        </th>
+        <th scope="col" (click)="toggleSort('isCheckedOut')" class="cursor-pointer">
+          Checked Out <span [innerHTML]="getSortIcon('isCheckedOut')"></span>
+        </th>
         <th>Actions</th>
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let receipt of paginatedReceipts">
+      <tr *ngFor="let receipt of paginatedReceipts | sort:sortField:sortOrder">
         <td>{{ receipt.id }}</td>
         <td>{{ receipt.customerId }}</td>
         <td>{{ receipt.operationDate | formatDate }}</td>
