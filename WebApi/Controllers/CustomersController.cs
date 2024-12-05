@@ -3,9 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.IO;
     using System.Threading.Tasks;
     using Abstraction.IServices;
     using Abstraction.Models;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
     [Route("api/[controller]")]
@@ -61,6 +63,31 @@
 
             return CreatedAtAction(nameof(GetById), new { id = value.Id }, value);
         }
+
+        [HttpPost("upload-photo/{id}")]
+        public async Task<IActionResult> UploadPhoto(int id, IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("File is not provided or empty.");
+            }
+
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+            var photoBytes = memoryStream.ToArray();
+
+            var customer = await this._customerService.GetByIdAsync(id);
+            if (customer == null)
+            {
+                return NotFound($"Customer with id {id} not found.");
+            }
+
+            customer.Photo = photoBytes;
+            await this._customerService.UpdateAsync(customer);
+
+            return Ok("Photo uploaded successfully.");
+        }
+
 
         // PUT: api/customers/1
         [HttpPut("{id}")]

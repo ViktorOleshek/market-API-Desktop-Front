@@ -22,8 +22,8 @@
   <ItemGroup>
 	  <ProjectReference Include="..\Abstraction\Abstraction.csproj" />
 	  <ProjectReference Include="..\Business\Business.csproj" />
-	  <ProjectReference Include="..\Data\Data.csproj" />
 	  <ProjectReference Include="..\DalMongoDB\DalMongoDB.csproj" />
+	  <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
 
