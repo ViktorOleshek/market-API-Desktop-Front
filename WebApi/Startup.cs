@@ -2,13 +2,16 @@ namespace WebApi
 {
     using Abstraction.IRepositories;
     using Abstraction.IServices;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.IdentityModel.Tokens;
     using Microsoft.OpenApi.Models;
+    using System.Text;
 
     public class Startup
     {
@@ -34,6 +37,20 @@ namespace WebApi
                 });
             });
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options =>
+                    {
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidIssuer = Configuration ["JwtSettings:Issuer"],
+                            ValidAudience = Configuration ["JwtSettings:Audience"],
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration ["JwtSettings:SecretKey"]))
+                        };
+                    });
+
             // SQL Server configuration
             services.AddDbContext<Data.Data.TradeMarketDbContext>(options =>
                 options.UseSqlServer(this.Configuration.GetConnectionString("Market")));
@@ -50,6 +67,7 @@ namespace WebApi
             services.AddScoped<ICustomerService, Business.Services.CustomerService>();
             services.AddScoped<IReceiptService, Business.Services.ReceiptService>();
             services.AddScoped<IStatisticService, Business.Services.StatisticService>();
+            services.AddScoped<IUserService, Business.Services.UserService>();
 
             services.AddAutoMapper(typeof(Business.AutomapperProfile).Assembly);
 
@@ -74,6 +92,7 @@ namespace WebApi
             // Use CORS
             app.UseCors("AllowAnyOrigin");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
