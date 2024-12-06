@@ -32,6 +32,14 @@ namespace Business
             _ = this.CreateMap<IProductCategory, ProductCategoryModel>()
                 .ForMember(pcm => pcm.ProductIds, pc => pc.MapFrom(x => x.Products.Select(p => p.Id)))
                 .ReverseMap();
+
+            _ = this.CreateMap<IUser, UserModel>()
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
+                .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.PersonId))
+                .ReverseMap();
+
         }
     }
 }
