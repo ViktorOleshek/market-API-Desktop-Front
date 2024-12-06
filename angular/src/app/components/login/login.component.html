@@ -1,0 +1,29 @@
+<div class="container my-4 p-4 bg-white rounded shadow-sm" style="max-width: 400px;">
+  <h2 class="text-center mb-4">Login</h2>
+  <form (submit)="login()">
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input
+        type="text"
+        id="username"
+        class="form-control"
+        [(ngModel)]="username"
+        name="username"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input
+        type="password"
+        id="password"
+        class="form-control"
+        [(ngModel)]="password"
+        name="password"
+        required
+      />
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Login</button>
+    <p *ngIf="errorMessage" class="text-danger text-center mt-3">{{ errorMessage }}</p>
+  </form>
+</div>
