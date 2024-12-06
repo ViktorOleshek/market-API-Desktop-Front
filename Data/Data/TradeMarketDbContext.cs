@@ -27,6 +27,8 @@ namespace Data.Data
 
         public DbSet<ReceiptDetail> ReceiptsDetails { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ArgumentNullException.ThrowIfNull(modelBuilder);
@@ -87,6 +89,28 @@ namespace Data.Data
                 e.Property(rd => rd.DiscountUnitPrice).HasColumnType("decimal(18,2)");
                 e.Property(rd => rd.UnitPrice).HasColumnType("decimal(18,2)");
             });
+
+            modelBuilder.Entity<User>(e =>
+            {
+                e.HasKey(u => u.Id);
+
+                e.Property(u => u.Username)
+                 .IsRequired()
+                 .HasMaxLength(80);
+
+                e.Property(u => u.Password)
+                 .IsRequired()
+                 .HasMaxLength(255);
+
+                e.Property(u => u.Role)
+                 .IsRequired()
+                 .HasMaxLength(60);
+
+                e.HasOne(u => u.Person)
+                 .WithOne()
+                 .HasForeignKey<User>(u => u.PersonId);
+            });
+
         }
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Abstraction.IRepositories;
 using Data.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Data.Data
 {
@@ -19,6 +17,7 @@ namespace Data.Data
             this.ProductCategoryRepository = new ProductCategoryRepository(dbContext);
             this.ReceiptRepository = new ReceiptRepository(dbContext);
             this.ReceiptDetailRepository = new ReceiptDetailRepository(dbContext);
+            this.UserRepository = new UserRepository(dbContext);
         }
 
         public UnitOfWork(
@@ -28,7 +27,8 @@ namespace Data.Data
             IProductRepository productRepository,
             IProductCategoryRepository productCategoryRepository,
             IReceiptRepository receiptRepository,
-            IReceiptDetailRepository receiptDetailRepository)
+            IReceiptDetailRepository receiptDetailRepository,
+            IUserRepository userRepository)
         {
             this.dbContext = dbContext;
             this.CustomerRepository = customerRepository;
@@ -37,6 +37,7 @@ namespace Data.Data
             this.ProductCategoryRepository = productCategoryRepository;
             this.ReceiptRepository = receiptRepository;
             this.ReceiptDetailRepository = receiptDetailRepository;
+            this.UserRepository = userRepository;
         }
 
         public ICustomerRepository CustomerRepository { get; }
@@ -50,6 +51,8 @@ namespace Data.Data
         public IReceiptRepository ReceiptRepository { get; }
 
         public IReceiptDetailRepository ReceiptDetailRepository { get; }
+
+        public IUserRepository UserRepository { get; }
 
         public Task SaveAsync()
         {

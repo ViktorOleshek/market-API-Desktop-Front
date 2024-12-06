@@ -4,6 +4,7 @@ using Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(TradeMarketDbContext))]
-    partial class TradeMarketDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241206005319_AddUserAuthentication")]
+    partial class AddUserAuthentication
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,41 +173,6 @@ namespace Data.Migrations
                     b.ToTable("ReceiptDetail");
                 });
 
-            modelBuilder.Entity("Data.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("PersonId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId")
-                        .IsUnique();
-
-                    b.ToTable("User");
-                });
-
             modelBuilder.Entity("Data.Entities.Customer", b =>
                 {
                     b.HasOne("Data.Entities.Person", "Person")
@@ -255,17 +223,6 @@ namespace Data.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Receipt");
-                });
-
-            modelBuilder.Entity("Data.Entities.User", b =>
-                {
-                    b.HasOne("Data.Entities.Person", "Person")
-                        .WithOne()
-                        .HasForeignKey("Data.Entities.User", "PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("Data.Entities.Customer", b =>
