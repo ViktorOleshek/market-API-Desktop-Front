@@ -5,34 +5,17 @@ import { CustomerListComponent } from './components/customer/customer-list/custo
 import { CustomerDetailComponent } from './components/customer/customer-detail/customer-detail.component';
 import { ReceiptListComponent } from './components/receipt/receipt-list/receipt-list.component';
 import { ReceiptDetailComponent } from './components/receipt/receipt-detail/receipt-detail.component';
+import { LoginComponent } from './components/login/login.component';
+import { AuthGuard } from './shared/guard/auth.guard';
 
 export const routes: Routes = [
-  {
-    path: 'customers',
-    component: CustomerListComponent,
-  },
-  {
-    path: 'customers/:id',
-    component: CustomerDetailComponent,
-  },
-  {
-    path: 'receipts',
-    component: ReceiptListComponent,
-  },
-  {
-    path: 'receipts/:id',
-    component: ReceiptDetailComponent,
-  },
-  {
-    path: '', // Головна сторінка
-    redirectTo: '/receipts',
-    pathMatch: 'full',
-  },
-  {
-    path: '**', // Невідомий маршрут
-    redirectTo: '/customers',
-    pathMatch: 'full',
-  },
+  { path: 'customers', component: CustomerListComponent, canActivate: [AuthGuard] },
+  { path: 'customers/:id', component: CustomerDetailComponent, canActivate: [AuthGuard] },
+  { path: 'receipts', component: ReceiptListComponent, canActivate: [AuthGuard] },
+  { path: 'receipts/:id', component: ReceiptDetailComponent, canActivate: [AuthGuard] },
+  { path: 'login', component: LoginComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Головна сторінка
+  { path: '**', redirectTo: '/login', pathMatch: 'full' }, // Невідомий маршрут
 ];
 
 @NgModule({

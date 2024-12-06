@@ -15,6 +15,9 @@
 <div class="container-fluid h-100 d-flex flex-column">
   <header class="row bg-primary text-white text-center py-3">
     <h1 class="col">Trade Market</h1>
+    <div class="ml-auto">
+      <button *ngIf="authService.isLoggedIn()" (click)="logout()" class="btn btn-outline-danger btn-sm">Logout</button>
+    </div>
   </header>
 
   <!-- Sidebar + Main Content -->
