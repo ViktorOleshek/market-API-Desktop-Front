@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Abstraction.IRepositories
+﻿namespace Abstraction.IRepositories
 {
     public interface IUnitOfWork
     {
@@ -15,6 +13,8 @@ namespace Abstraction.IRepositories
         IReceiptRepository ReceiptRepository { get; }
 
         IReceiptDetailRepository ReceiptDetailRepository { get; }
+
+        IUserRepository UserRepository { get; }
 
         Task SaveAsync();
     }
