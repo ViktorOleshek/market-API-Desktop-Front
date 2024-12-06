@@ -5,10 +5,12 @@
     using System.Threading.Tasks;
     using Abstraction.IServices;
     using Abstraction.Models;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     [ApiController]
     [Route("api/[controller]s")] // Changed to match test's RequestUri = "api/receipts/"
+    [Authorize]
     public class ReceiptController : Controller
     {
         private readonly IReceiptService _receiptService;
