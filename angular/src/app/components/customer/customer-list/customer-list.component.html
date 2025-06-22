@@ -5,9 +5,6 @@
     <table class="table table-bordered table-hover">
       <thead class="thead-dark">
       <tr>
-        <th scope="col" (click)="toggleSort('id')" class="cursor-pointer">
-          Id <span [innerHTML]="getSortIcon('id')"></span>
-        </th>
         <th scope="col" (click)="toggleSort('name')" class="cursor-pointer">
           Name <span [innerHTML]="getSortIcon('name')"></span>
         </th>
@@ -25,7 +22,6 @@
       </thead>
       <tbody>
       <tr *ngFor="let customer of paginatedCustomers | sort:sortField:sortOrder">
-        <td>{{ customer.id }}</td>
         <td>{{ customer.name }}</td>
         <td>{{ customer.surname }}</td>
         <td>{{ customer.birthDate | formatDate }}</td>
@@ -50,5 +46,6 @@
       <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary btn-sm">Next</button>
     </div>
     <button (click)="addCustomer()" class="btn btn-primary btn-sm">Add Customer</button>
+    <button (click)="reloadCustomers()" class="btn btn-secondary btn-sm">Reload Data</button>
   </div>
 </div>

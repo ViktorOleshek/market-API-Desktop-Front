@@ -102,4 +102,17 @@ export class CustomerListComponent implements OnInit {
   addCustomer(): void {
     this.router.navigate(['/customers/add']);
   }
+
+  reloadCustomers(): void {
+    this.customerService.getAllCustomers().subscribe(
+      (data) => {
+        this.customers = data;
+        this.updatePagination();
+      },
+      (error) => {
+        console.error('Failed to reload customers:', error);
+      }
+    );
+  }
+
 }

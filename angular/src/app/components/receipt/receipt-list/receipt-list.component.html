@@ -6,9 +6,6 @@
     <table class="table table-bordered table-hover">
       <thead class="thead-dark">
       <tr>
-        <th scope="col" (click)="toggleSort('id')" class="cursor-pointer">
-          Id <span [innerHTML]="getSortIcon('id')"></span>
-        </th>
         <th scope="col" (click)="toggleSort('customerId')" class="cursor-pointer">
           Customer Id <span [innerHTML]="getSortIcon('customerId')"></span>
         </th>
@@ -23,7 +20,6 @@
       </thead>
       <tbody>
       <tr *ngFor="let receipt of paginatedReceipts | sort:sortField:sortOrder">
-        <td>{{ receipt.id }}</td>
         <td>{{ receipt.customerId }}</td>
         <td>{{ receipt.operationDate | formatDate }}</td>
         <td>{{ receipt.isCheckedOut ? 'Yes' : 'No' }}</td>
