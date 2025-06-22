@@ -1,106 +1,100 @@
-﻿using Abstraction.IEntities;
+﻿using Abstraction.Entities;
 using Abstraction.IRepositories;
-using DalMongoDB.Entities;
 using DalMongoDB.Mappers;
 using MongoDB.Driver;
 
-namespace DalMongoDB.Repositories
+namespace DalMongoDB.Repositories;
+
+public class ReceiptRepository
+    : AbstractRepository<Receipt>, IReceiptRepository
 {
-    public class ReceiptRepository : AbstractRepository<IReceipt>, IReceiptRepository
+    public ReceiptRepository(IMongoDatabase database)
+        : base(database, "Receipts")
     {
-        public ReceiptRepository(IMongoDatabase database)
-            : base(database, "Receipts")
-        {
-            ArgumentNullException.ThrowIfNull(database);
-        }
+        ArgumentNullException.ThrowIfNull(database);
+    }
 
-        public IReceipt CreateEntity()
-        {
-            return new Receipt { Customer = new Customer() };
-        }
+    public async Task<IEnumerable<Receipt>> GetAllWithDetailsAsync()
+    {
+        var aggregation = await this.Collection.Aggregate()
+            .Lookup(
+                foreignCollectionName: "ReceiptDetails",
+                localField: "Id",
+                foreignField: "ReceiptId",
+                @as: "ReceiptDetails"
+            )
+            .Lookup(
+                foreignCollectionName: "Products",
+                localField: "ReceiptDetails.ProductId",
+                foreignField: "Id",
+                @as: "ProductDetails"
+            )
+            .Lookup(
+                foreignCollectionName: "Categories",
+                localField: "ProductDetails.CategoryId",
+                foreignField: "Id",
+                @as: "CategoryDetails"
+            )
+            .Lookup(
+                foreignCollectionName: "Customers",
+                localField: "CustomerId",
+                foreignField: "Id",
+                @as: "CustomerDetails"
+            )
+            .Lookup(
+                foreignCollectionName: "Persons",
+                localField: "CustomerDetails.PersonId",
+                foreignField: "Id",
+                @as: "PersonDetails"
+            )
+            .ToListAsync();
 
-        public async Task<IEnumerable<IReceipt>> GetAllWithDetailsAsync()
-        {
-            var aggregation = await this.Collection.Aggregate()
-                .Lookup(
-                    foreignCollectionName: "ReceiptDetails",
-                    localField: "Id",
-                    foreignField: "ReceiptId",
-                    @as: "ReceiptDetails"
-                )
-                .Lookup(
-                    foreignCollectionName: "Products",
-                    localField: "ReceiptDetails.ProductId",
-                    foreignField: "Id",
-                    @as: "ProductDetails"
-                )
-                .Lookup(
-                    foreignCollectionName: "Categories",
-                    localField: "ProductDetails.CategoryId",
-                    foreignField: "Id",
-                    @as: "CategoryDetails"
-                )
-                .Lookup(
-                    foreignCollectionName: "Customers",
-                    localField: "CustomerId",
-                    foreignField: "Id",
-                    @as: "CustomerDetails"
-                )
-                .Lookup(
-                    foreignCollectionName: "Persons",
-                    localField: "CustomerDetails.PersonId",
-                    foreignField: "Id",
-                    @as: "PersonDetails"
-                )
-                .ToListAsync();
+        var receipts = aggregation.Select(EntityMapper.MapToReceipt).ToList();
 
-            var receipts = aggregation.Select(EntityMapper.MapToReceipt).ToList();
+        return receipts;
+    }
 
-            return receipts;
-        }
+    public async Task<Receipt> GetByIdWithDetailsAsync(int id)
+    {
+        var aggregation = await this.Collection.Aggregate()
+            .Match(r => r.Id == id)
+            .Lookup(
+                foreignCollectionName: "ReceiptDetails",
+                localField: "Id",
+                foreignField: "ReceiptId",
+                @as: "ReceiptDetails"
+            )
+            .Lookup(
+                foreignCollectionName: "Products",
+                localField: "ReceiptDetails.ProductId",
+                foreignField: "Id",
+                @as: "ProductDetails"
+            )
+            .Lookup(
+                foreignCollectionName: "Categories",
+                localField: "ProductDetails.CategoryId",
+                foreignField: "Id",
+                @as: "CategoryDetails"
+            )
+            .Lookup(
+                foreignCollectionName: "Customers",
+                localField: "CustomerId",
+                foreignField: "Id",
+                @as: "CustomerDetails"
+            )
+            .Lookup(
+                foreignCollectionName: "Persons",
+                localField: "CustomerDetails.PersonId",
+                foreignField: "Id",
+                @as: "PersonDetails"
+            )
+            .FirstOrDefaultAsync();
 
-        public async Task<IReceipt> GetByIdWithDetailsAsync(int id)
-        {
-            var aggregation = await this.Collection.Aggregate()
-                .Match(r => r.Id == id)
-                .Lookup(
-                    foreignCollectionName: "ReceiptDetails",
-                    localField: "Id",
-                    foreignField: "ReceiptId",
-                    @as: "ReceiptDetails"
-                )
-                .Lookup(
-                    foreignCollectionName: "Products",
-                    localField: "ReceiptDetails.ProductId",
-                    foreignField: "Id",
-                    @as: "ProductDetails"
-                )
-                .Lookup(
-                    foreignCollectionName: "Categories",
-                    localField: "ProductDetails.CategoryId",
-                    foreignField: "Id",
-                    @as: "CategoryDetails"
-                )
-                .Lookup(
-                    foreignCollectionName: "Customers",
-                    localField: "CustomerId",
-                    foreignField: "Id",
-                    @as: "CustomerDetails"
-                )
-                .Lookup(
-                    foreignCollectionName: "Persons",
-                    localField: "CustomerDetails.PersonId",
-                    foreignField: "Id",
-                    @as: "PersonDetails"
-                )
-                .FirstOrDefaultAsync();
+        if (aggregation == null)
+            return null;
 
-            if (aggregation == null)
-                return null;
+        var receipt = EntityMapper.MapToReceipt(aggregation);
 
-            var receipt = EntityMapper.MapToReceipt(aggregation);
-
-            return receipt;
-        }
+        return receipt;
     }
 }

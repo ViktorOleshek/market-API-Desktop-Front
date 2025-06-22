@@ -1,11 +1,11 @@
-﻿using Abstraction.IEntities;
+﻿using Abstraction.Entities;
 
-namespace Abstraction.IRepositories
+namespace Abstraction.IRepositories;
+
+public interface IProductRepository
+    : IRepository<Product>
 {
-    public interface IProductRepository : IRepository<IProduct>
-    {
-        Task<IEnumerable<IProduct>> GetAllWithDetailsAsync();
+    Task<IEnumerable<Product>> GetAllWithDetailsAsync();
 
-        Task<IProduct> GetByIdWithDetailsAsync(int id);
-    }
+    Task<Product> GetByIdWithDetailsAsync(int id);
 }

@@ -1,21 +1,20 @@
-﻿namespace Abstraction.IRepositories
+﻿namespace Abstraction.IRepositories;
+
+public interface IUnitOfWork
 {
-    public interface IUnitOfWork
-    {
-        ICustomerRepository CustomerRepository { get; }
+    ICustomerRepository CustomerRepository { get; }
 
-        IPersonRepository PersonRepository { get; }
+    IPersonRepository PersonRepository { get; }
 
-        IProductRepository ProductRepository { get; }
+    IProductRepository ProductRepository { get; }
 
-        IProductCategoryRepository ProductCategoryRepository { get; }
+    IProductCategoryRepository ProductCategoryRepository { get; }
 
-        IReceiptRepository ReceiptRepository { get; }
+    IReceiptRepository ReceiptRepository { get; }
 
-        IReceiptDetailRepository ReceiptDetailRepository { get; }
+    IReceiptDetailRepository ReceiptDetailRepository { get; }
 
-        IUserRepository UserRepository { get; }
+    IUserRepository UserRepository { get; }
 
-        Task SaveAsync();
-    }
+    Task SaveAsync();
 }

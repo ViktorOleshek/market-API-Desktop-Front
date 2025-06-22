@@ -1,116 +1,116 @@
-﻿using System;
-using Data.Entities;
+﻿using Abstraction.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 
-namespace Data.Data
+namespace Data.Data;
+
+public class TradeMarketDbContext
+    : DbContext
 {
-    public class TradeMarketDbContext : DbContext
+    public TradeMarketDbContext()
     {
-        public TradeMarketDbContext()
+    }
+
+    public TradeMarketDbContext(DbContextOptions<TradeMarketDbContext> options)
+        : base(options)
+    {
+    }
+
+    public DbSet<Customer> Customers { get; set; }
+
+    public DbSet<Person> Persons { get; set; }
+
+    public DbSet<Product> Products { get; set; }
+
+    public DbSet<ProductCategory> ProductCategories { get; set; }
+
+    public DbSet<Receipt> Receipts { get; set; }
+
+    public DbSet<ReceiptDetail> ReceiptsDetails { get; set; }
+
+    public DbSet<User> Users { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(modelBuilder);
+
+        modelBuilder.Entity<Customer>(e =>
         {
-        }
+            e.HasOne(c => c.Person)
+             .WithOne()
+             .HasForeignKey<Customer>(c => c.PersonId);
 
-        public TradeMarketDbContext(DbContextOptions<TradeMarketDbContext> options)
-            : base(options)
+            e.HasMany(c => c.Receipts)
+             .WithOne(r => r.Customer)
+             .HasForeignKey(r => r.CustomerId);
+        });
+
+        modelBuilder.Entity<Person>(e =>
         {
-        }
+        });
 
-        public DbSet<Customer> Customers { get; set; }
-
-        public DbSet<Person> Persons { get; set; }
-
-        public DbSet<Product> Products { get; set; }
-
-        public DbSet<ProductCategory> ProductCategories { get; set; }
-
-        public DbSet<Receipt> Receipts { get; set; }
-
-        public DbSet<ReceiptDetail> ReceiptsDetails { get; set; }
-
-        public DbSet<User> Users { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        modelBuilder.Entity<Product>(e =>
         {
-            ArgumentNullException.ThrowIfNull(modelBuilder);
+            e.HasOne(p => p.Category)
+             .WithMany(c => c.Products)
+             .HasForeignKey(p => p.ProductCategoryId);
 
-            modelBuilder.Entity<Customer>(e =>
-            {
-                e.HasOne(c => c.Person)
-                 .WithOne()
-                 .HasForeignKey<Customer>(c => c.PersonId);
+            e.HasMany(p => p.ReceiptDetails)
+             .WithOne(rd => rd.Product)
+             .HasForeignKey(rd => rd.ProductId);
 
-                e.HasMany(c => c.Receipts)
-                 .WithOne(r => r.Customer)
-                 .HasForeignKey(r => r.CustomerId);
-            });
+            e.Property(p => p.Price).HasColumnType("decimal(18,2)");
+        });
 
-            modelBuilder.Entity<Person>(e =>
-            {
-            });
+        modelBuilder.Entity<ProductCategory>(e =>
+        {
+        });
 
-            modelBuilder.Entity<Product>(e =>
-            {
-                e.HasOne(p => p.Category)
-                 .WithMany(c => c.Products)
-                 .HasForeignKey(p => p.ProductCategoryId);
+        modelBuilder.Entity<Receipt>(e =>
+        {
+            e.HasOne(r => r.Customer)
+             .WithMany(c => c.Receipts)
+             .HasForeignKey(r => r.CustomerId);
 
-                e.HasMany(p => p.ReceiptDetails)
-                 .WithOne(rd => rd.Product)
-                 .HasForeignKey(rd => rd.ProductId);
+            e.HasMany(r => r.ReceiptDetails)
+             .WithOne(rd => rd.Receipt)
+             .HasForeignKey(rd => rd.ReceiptId);
+        });
 
-                e.Property(p => p.Price).HasColumnType("decimal(18,2)");
-            });
+        modelBuilder.Entity<ReceiptDetail>(e =>
+        {
+            e.HasOne(rd => rd.Receipt)
+             .WithMany(r => r.ReceiptDetails)
+             .HasForeignKey(rd => rd.ReceiptId);
 
-            modelBuilder.Entity<ProductCategory>(e =>
-            {
-            });
+            e.HasOne(rd => rd.Product)
+             .WithMany(p => p.ReceiptDetails)
+             .HasForeignKey(rd => rd.ProductId);
 
-            modelBuilder.Entity<Receipt>(e =>
-            {
-                e.HasOne(r => r.Customer)
-                 .WithMany(c => c.Receipts)
-                 .HasForeignKey(r => r.CustomerId);
+            e.Property(rd => rd.DiscountUnitPrice).HasColumnType("decimal(18,2)");
+            e.Property(rd => rd.UnitPrice).HasColumnType("decimal(18,2)");
+        });
 
-                e.HasMany(r => r.ReceiptDetails)
-                 .WithOne(rd => rd.Receipt)
-                 .HasForeignKey(rd => rd.ReceiptId);
-            });
+        modelBuilder.Entity<User>(e =>
+        {
+            e.HasKey(u => u.Id);
 
-            modelBuilder.Entity<ReceiptDetail>(e =>
-            {
-                e.HasOne(rd => rd.Receipt)
-                 .WithMany(r => r.ReceiptDetails)
-                 .HasForeignKey(rd => rd.ReceiptId);
+            e.Property(u => u.Username)
+             .IsRequired()
+             .HasMaxLength(80);
 
-                e.HasOne(rd => rd.Product)
-                 .WithMany(p => p.ReceiptDetails)
-                 .HasForeignKey(rd => rd.ProductId);
+            e.Property(u => u.Password)
+             .IsRequired()
+             .HasMaxLength(255);
 
-                e.Property(rd => rd.DiscountUnitPrice).HasColumnType("decimal(18,2)");
-                e.Property(rd => rd.UnitPrice).HasColumnType("decimal(18,2)");
-            });
+            e.Property(u => u.Role)
+             .IsRequired()
+             .HasMaxLength(60);
 
-            modelBuilder.Entity<User>(e =>
-            {
-                e.HasKey(u => u.Id);
+            e.HasOne(u => u.Person)
+             .WithOne()
+             .HasForeignKey<User>(u => u.PersonId);
+        });
 
-                e.Property(u => u.Username)
-                 .IsRequired()
-                 .HasMaxLength(80);
-
-                e.Property(u => u.Password)
-                 .IsRequired()
-                 .HasMaxLength(255);
-
-                e.Property(u => u.Role)
-                 .IsRequired()
-                 .HasMaxLength(60);
-
-                e.HasOne(u => u.Person)
-                 .WithOne()
-                 .HasForeignKey<User>(u => u.PersonId);
-            });
-
-        }
     }
 }

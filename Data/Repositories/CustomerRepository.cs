@@ -1,43 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Abstraction.IEntities;
+﻿using Abstraction.Entities;
 using Abstraction.IRepositories;
 using Data.Data;
-using Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Data.Repositories
+namespace Data.Repositories;
+
+public class CustomerRepository
+    : AbstractRepository<Customer>, ICustomerRepository
 {
-    public class CustomerRepository : AbstractRepository<ICustomer>, ICustomerRepository
+    public CustomerRepository(TradeMarketDbContext context)
+        : base(context)
     {
-        public CustomerRepository(TradeMarketDbContext context)
-            : base(context)
-        {
-            ArgumentNullException.ThrowIfNull(context);
-        }
+        ArgumentNullException.ThrowIfNull(context);
+    }
 
-        public override ICustomer CreateEntity()
-        {
-            return new Customer();
-        }
+    public async Task<IEnumerable<Customer>> GetAllWithDetailsAsync()
+    {
+        return await this.Context.Set<Customer>()
+            .Include(e => e.Person)
+            .Include(e => e.Receipts)
+                .ThenInclude(r => r.ReceiptDetails)
+            .ToListAsync();
+    }
 
-        public async Task<IEnumerable<ICustomer>> GetAllWithDetailsAsync()
-        {
-            return await this.Context.Set<Customer>()
-                .Include(e => e.Person)
-                .Include(e => e.Receipts)
-                    .ThenInclude(r => r.ReceiptDetails)
-                .ToListAsync();
-        }
-
-        public async Task<ICustomer> GetByIdWithDetailsAsync(int id)
-        {
-            return await this.Context.Set<Customer>()
-                .Include(e => e.Receipts)
-                    .ThenInclude(r => r.ReceiptDetails)
-                .Include(e => e.Person)
-                .FirstOrDefaultAsync(e => e.Id == id);
-        }
+    public async Task<Customer> GetByIdWithDetailsAsync(int id)
+    {
+        return await this.Context.Set<Customer>()
+            .Include(e => e.Receipts)
+                .ThenInclude(r => r.ReceiptDetails)
+            .Include(e => e.Person)
+            .FirstOrDefaultAsync(e => e.Id == id);
     }
 }
