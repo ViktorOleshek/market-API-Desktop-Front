@@ -1,29 +1,197 @@
-<div class="container my-4 p-4 bg-white rounded shadow-sm" style="max-width: 400px;">
-  <h2 class="text-center mb-4">Login</h2>
-  <form (submit)="login()">
-    <div class="mb-3">
-      <label for="username" class="form-label">Username</label>
-      <input
-        type="text"
-        id="username"
-        class="form-control"
-        [(ngModel)]="username"
-        name="username"
-        required
-      />
+<!-- login.component.html -->
+<div class="auth-container">
+  <div class="auth-card">
+    <!-- Header -->
+    <div class="auth-header">
+      <div class="auth-logo">
+        <i class="bi bi-shop-window"></i>
+      </div>
+      <h2 class="auth-title">{{ isLoginMode ? 'Welcome Back' : 'Create Account' }}</h2>
+      <p class="auth-subtitle">{{ isLoginMode ? 'Sign in to your account' : 'Join Trade Market today' }}</p>
     </div>
-    <div class="mb-3">
-      <label for="password" class="form-label">Password</label>
-      <input
-        type="password"
-        id="password"
-        class="form-control"
-        [(ngModel)]="password"
-        name="password"
-        required
-      />
+
+    <!-- OAuth Buttons -->
+    <div class="oauth-section">
+      <button type="button" class="oauth-btn oauth-google" (click)="loginWithGoogle()">
+        <i class="bi bi-google"></i>
+        <span>Continue with Google</span>
+      </button>
+
+      <button type="button" class="oauth-btn oauth-microsoft" (click)="loginWithMicrosoft()">
+        <i class="bi bi-microsoft"></i>
+        <span>Continue with Microsoft</span>
+      </button>
     </div>
-    <button type="submit" class="btn btn-primary w-100">Login</button>
-    <p *ngIf="errorMessage" class="text-danger text-center mt-3">{{ errorMessage }}</p>
-  </form>
+
+    <!-- Divider -->
+    <div class="auth-divider">
+      <span class="divider-line"></span>
+      <span class="divider-text">or</span>
+      <span class="divider-line"></span>
+    </div>
+
+    <!-- Auth Form -->
+    <form class="auth-form" (ngSubmit)="onSubmit()" #authForm="ngForm">
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="username" class="form-label">
+          <i class="bi bi-person"></i>
+          Username
+        </label>
+        <input
+          type="text"
+          id="username"
+          class="form-input"
+          [(ngModel)]="username"
+          name="username"
+          required
+          [placeholder]="isLoginMode ? 'Enter your username' : 'Choose a username'"
+          #usernameField="ngModel"
+          [class.error]="usernameField.invalid && usernameField.touched"
+        />
+        <div class="field-error" *ngIf="usernameField.invalid && usernameField.touched">
+          <span *ngIf="usernameField.errors?.['required']">Username is required</span>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password" class="form-label">
+          <i class="bi bi-lock"></i>
+          Password
+        </label>
+        <div class="password-input-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            class="form-input"
+            [(ngModel)]="password"
+            name="password"
+            required
+            [placeholder]="isLoginMode ? 'Enter your password' : 'Create a strong password'"
+            #passwordField="ngModel"
+            [class.error]="passwordField.invalid && passwordField.touched"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            tabindex="-1"
+          >
+            <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+          </button>
+        </div>
+        <div class="field-error" *ngIf="passwordField.invalid && passwordField.touched">
+          <span *ngIf="passwordField.errors?.['required']">Password is required</span>
+        </div>
+      </div>
+
+      <!-- Confirm Password Field (Registration only) -->
+      <div class="form-group" *ngIf="!isLoginMode">
+        <label for="confirmPassword" class="form-label">
+          <i class="bi bi-lock-fill"></i>
+          Confirm Password
+        </label>
+        <div class="password-input-wrapper">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            id="confirmPassword"
+            class="form-input"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            [required]="!isLoginMode"
+            placeholder="Confirm your password"
+            #confirmPasswordField="ngModel"
+            [class.error]="(confirmPasswordField.invalid && confirmPasswordField.touched && !isLoginMode) || (password !== confirmPassword && confirmPassword && !isLoginMode)"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="toggleConfirmPasswordVisibility()"
+            tabindex="-1"
+          >
+            <i [class]="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+          </button>
+        </div>
+        <div class="field-error" *ngIf="!isLoginMode && ((confirmPasswordField.invalid && confirmPasswordField.touched) || (password !== confirmPassword && confirmPassword))">
+          <span *ngIf="confirmPasswordField.errors?.['required']">Please confirm your password</span>
+          <span *ngIf="password !== confirmPassword && confirmPassword">Passwords do not match</span>
+        </div>
+      </div>
+
+      <!-- Remember Me & Forgot Password (Login only) -->
+      <div class="form-options" *ngIf="isLoginMode">
+        <label class="checkbox-wrapper">
+          <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe">
+          <span class="checkmark"></span>
+          <span class="checkbox-text">Remember me</span>
+        </label>
+        <a href="#" class="forgot-password" (click)="forgotPassword($event)">
+          Forgot password?
+        </a>
+      </div>
+
+      <!-- Terms & Conditions (Registration only) -->
+      <div class="form-options" *ngIf="!isLoginMode">
+        <label class="checkbox-wrapper">
+          <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" required>
+          <span class="checkmark"></span>
+          <span class="checkbox-text">
+            I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="terms-link">Privacy Policy</a>
+          </span>
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="auth-submit-btn"
+        [disabled]="!authForm.form.valid || isLoading || (!isLoginMode && password !== confirmPassword)"
+        [class.loading]="isLoading"
+      >
+        <span class="btn-spinner" *ngIf="isLoading">
+          <i class="bi bi-arrow-clockwise"></i>
+        </span>
+        <span *ngIf="!isLoading">{{ isLoginMode ? 'Sign In' : 'Create Account' }}</span>
+        <span *ngIf="isLoading">{{ isLoginMode ? 'Signing in...' : 'Creating account...' }}</span>
+      </button>
+
+      <!-- Error Message -->
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <!-- Success Message -->
+      <div class="success-message" *ngIf="successMessage">
+        <i class="bi bi-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+    </form>
+
+    <!-- Toggle Mode -->
+    <div class="auth-toggle">
+      <p *ngIf="isLoginMode">
+        Don't have an account?
+        <button type="button" class="toggle-btn" (click)="toggleMode()">
+          Sign up
+        </button>
+      </p>
+      <p *ngIf="!isLoginMode">
+        Already have an account?
+        <button type="button" class="toggle-btn" (click)="toggleMode()">
+          Sign in
+        </button>
+      </p>
+    </div>
+  </div>
+
+  <!-- Background Animation -->
+  <div class="auth-background">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+    <div class="floating-shape shape-4"></div>
+    <div class="floating-shape shape-5"></div>
+  </div>
 </div>
