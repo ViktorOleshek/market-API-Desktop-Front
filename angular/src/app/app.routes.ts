@@ -7,12 +7,14 @@ import { CustomerDetailComponent } from './components/customer/customer-detail/c
 import { ReceiptListComponent } from './components/receipt/receipt-list/receipt-list.component';
 import { ReceiptDetailComponent } from './components/receipt/receipt-detail/receipt-detail.component';
 import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
 import { AuthGuard } from './shared/guard/auth.guard';
 import {NotFoundComponent} from './components/not-found/not-found.component';
 
 export const routes: Routes = [
   // Public routes
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent },
 
   // Protected routes - only for authenticated users

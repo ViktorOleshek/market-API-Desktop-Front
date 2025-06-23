@@ -17,14 +17,10 @@ export class LoginComponent {
   // Form data
   username = '';
   password = '';
-  confirmPassword = '';
   rememberMe = false;
-  acceptTerms = false;
 
   // UI state
-  isLoginMode = true;
   showPassword = false;
-  showConfirmPassword = false;
   isLoading = false;
   errorMessage = '';
   successMessage = '';
@@ -32,12 +28,10 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   /**
-   * Toggle between login and registration mode
+   * Navigate to registration page
    */
-  toggleMode(): void {
-    this.isLoginMode = !this.isLoginMode;
-    this.clearMessages();
-    this.resetForm();
+  navigateToRegister(): void {
+    this.router.navigate(['/register']);
   }
 
   /**
@@ -45,13 +39,6 @@ export class LoginComponent {
    */
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
-  }
-
-  /**
-   * Toggle confirm password visibility
-   */
-  toggleConfirmPasswordVisibility(): void {
-    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   /**
@@ -63,17 +50,6 @@ export class LoginComponent {
     this.clearMessages();
     this.isLoading = true;
 
-    if (this.isLoginMode) {
-      this.performLogin();
-    } else {
-      this.performRegistration();
-    }
-  }
-
-  /**
-   * Perform login
-   */
-  private performLogin(): void {
     this.authService.login(this.username, this.password).subscribe({
       next: (response) => {
         this.isLoading = false;
@@ -86,34 +62,6 @@ export class LoginComponent {
       error: (error) => {
         this.isLoading = false;
         this.errorMessage = error?.error?.message || 'Login failed. Please check your credentials.';
-      }
-    });
-  }
-
-  /**
-   * Perform registration
-   */
-  private performRegistration(): void {
-    if (this.password !== this.confirmPassword) {
-      this.isLoading = false;
-      this.errorMessage = 'Passwords do not match.';
-      return;
-    }
-
-    this.authService.register(this.username, this.password).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        this.successMessage = 'Account created successfully! Please sign in.';
-
-        setTimeout(() => {
-          this.isLoginMode = true;
-          this.resetForm();
-          this.clearMessages();
-        }, 2000);
-      },
-      error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = error?.error?.message || 'Registration failed. Please try again.';
       }
     });
   }
@@ -196,18 +144,5 @@ export class LoginComponent {
   private clearMessages(): void {
     this.errorMessage = '';
     this.successMessage = '';
-  }
-
-  /**
-   * Reset form data
-   */
-  private resetForm(): void {
-    this.username = '';
-    this.password = '';
-    this.confirmPassword = '';
-    this.rememberMe = false;
-    this.acceptTerms = false;
-    this.showPassword = false;
-    this.showConfirmPassword = false;
   }
 }

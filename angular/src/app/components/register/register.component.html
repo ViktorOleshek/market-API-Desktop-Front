@@ -1,4 +1,4 @@
-<!-- login.component.html -->
+<!-- register.component.html -->
 <div class="auth-container">
   <div class="auth-card">
     <!-- Header -->
@@ -6,32 +6,12 @@
       <div class="auth-logo">
         <i class="bi bi-shop-window"></i>
       </div>
-      <h2 class="auth-title">Welcome Back</h2>
-      <p class="auth-subtitle">Sign in to your account</p>
+      <h2 class="auth-title">Create Account</h2>
+      <p class="auth-subtitle">Join Trade Market today</p>
     </div>
 
-    <!-- OAuth Buttons -->
-    <div class="oauth-section">
-      <button type="button" class="oauth-btn oauth-google" (click)="loginWithGoogle()">
-        <i class="bi bi-google"></i>
-        <span>Continue with Google</span>
-      </button>
-
-      <button type="button" class="oauth-btn oauth-microsoft" (click)="loginWithMicrosoft()">
-        <i class="bi bi-microsoft"></i>
-        <span>Continue with Microsoft</span>
-      </button>
-    </div>
-
-    <!-- Divider -->
-    <div class="auth-divider">
-      <span class="divider-line"></span>
-      <span class="divider-text">or</span>
-      <span class="divider-line"></span>
-    </div>
-
-    <!-- Login Form -->
-    <form class="auth-form" (ngSubmit)="onSubmit()" #loginForm="ngForm">
+    <!-- Registration Form -->
+    <form class="auth-form" (ngSubmit)="onSubmit()" #registerForm="ngForm">
       <!-- Username Field -->
       <div class="form-group">
         <label for="username" class="form-label">
@@ -45,7 +25,7 @@
           [(ngModel)]="username"
           name="username"
           required
-          placeholder="Enter your username"
+          placeholder="Choose a username"
           #usernameField="ngModel"
           [class.error]="usernameField.invalid && usernameField.touched"
         />
@@ -68,7 +48,7 @@
             [(ngModel)]="password"
             name="password"
             required
-            placeholder="Enter your password"
+            placeholder="Create a strong password"
             #passwordField="ngModel"
             [class.error]="passwordField.invalid && passwordField.touched"
           />
@@ -86,30 +66,62 @@
         </div>
       </div>
 
-      <!-- Remember Me & Forgot Password -->
+      <!-- Confirm Password Field -->
+      <div class="form-group">
+        <label for="confirmPassword" class="form-label">
+          <i class="bi bi-lock-fill"></i>
+          Confirm Password
+        </label>
+        <div class="password-input-wrapper">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            id="confirmPassword"
+            class="form-input"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            required
+            placeholder="Confirm your password"
+            #confirmPasswordField="ngModel"
+            [class.error]="(confirmPasswordField.invalid && confirmPasswordField.touched) || (password !== confirmPassword && confirmPassword)"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="toggleConfirmPasswordVisibility()"
+            tabindex="-1"
+          >
+            <i [class]="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+          </button>
+        </div>
+        <div class="field-error" *ngIf="(confirmPasswordField.invalid && confirmPasswordField.touched) || (password !== confirmPassword && confirmPassword)">
+          <span *ngIf="confirmPasswordField.errors?.['required']">Please confirm your password</span>
+          <span *ngIf="password !== confirmPassword && confirmPassword">Passwords do not match</span>
+        </div>
+      </div>
+
+      <!-- Terms & Conditions -->
       <div class="form-options">
         <label class="checkbox-wrapper">
-          <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe">
+          <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" required>
           <span class="checkmark"></span>
-          <span class="checkbox-text">Remember me</span>
+          <span class="checkbox-text">
+            I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="terms-link">Privacy Policy</a>
+          </span>
         </label>
-        <a href="#" class="forgot-password" (click)="forgotPassword($event)">
-          Forgot password?
-        </a>
       </div>
 
       <!-- Submit Button -->
       <button
         type="submit"
         class="auth-submit-btn"
-        [disabled]="!loginForm.form.valid || isLoading"
+        [disabled]="!registerForm.form.valid || isLoading || (password !== confirmPassword)"
         [class.loading]="isLoading"
       >
         <span class="btn-spinner" *ngIf="isLoading">
           <i class="bi bi-arrow-clockwise"></i>
         </span>
-        <span *ngIf="!isLoading">Sign In</span>
-        <span *ngIf="isLoading">Signing in...</span>
+        <span *ngIf="!isLoading">Create Account</span>
+        <span *ngIf="isLoading">Creating account...</span>
       </button>
 
       <!-- Error Message -->
@@ -125,12 +137,12 @@
       </div>
     </form>
 
-    <!-- Toggle to Registration -->
+    <!-- Toggle to Login -->
     <div class="auth-toggle">
       <p>
-        Don't have an account?
-        <button type="button" class="toggle-btn" (click)="navigateToRegister()">
-          Sign up
+        Already have an account?
+        <button type="button" class="toggle-btn" (click)="navigateToLogin()">
+          Sign in
         </button>
       </p>
     </div>
