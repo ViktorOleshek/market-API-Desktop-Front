@@ -200,6 +200,25 @@ export class ReceiptDetailComponent implements OnInit {
     this.quantityToAdd = 1;
   }
 
+  addSingleProductToReceipt(productId: number): void {
+    this.receiptService.addProductToReceipt(
+      this.receipt.id,
+      productId,
+      1
+    ).subscribe({
+      next: () => {
+        this.successMessage = 'Product quantity increased';
+        this.loadReceiptDetails(this.receipt.id);
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (error) => {
+        console.error('Error adding product:', error);
+        this.errorMessage = 'Error increasing product quantity';
+        setTimeout(() => this.errorMessage = '', 3000);
+      }
+    });
+  }
+
   addProductToReceipt(): void {
     if (!this.selectedProduct || this.quantityToAdd <= 0) return;
 

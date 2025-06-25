@@ -535,6 +535,21 @@
   animation: fadeIn 0.3s ease-out;
 }
 
+.fixed-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideInUp 0.3s ease-out;
+  z-index: 1001;
+}
+
 .modal-content {
   background: white;
   border-radius: 20px;
@@ -686,6 +701,72 @@
   background: rgba(107, 114, 128, 0.2);
 }
 
+.receipt-detail-card.compact {
+  padding: 1rem;
+}
+
+.receipt-detail-card.compact .product-meta {
+  flex-direction: row;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(248, 250, 252, 0.8);
+  border-radius: 8px;
+  padding: 0.25rem;
+  border: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.quantity-btn-small {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  font-size: 0.875rem;
+}
+
+.quantity-btn-small:hover:not(:disabled) {
+  background: rgba(102, 126, 234, 0.2);
+  transform: scale(1.1);
+}
+
+.quantity-btn-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-display {
+  min-width: 2rem;
+  text-align: center;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.9rem;
+}
+
+.quantity-display-readonly {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.product-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .modal-btn.primary {
   background: linear-gradient(45deg, #667eea, #764ba2);
   color: white;
@@ -766,29 +847,6 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .receipt-content {
-    grid-template-columns: 1fr;
-    padding: 1rem;
-  }
-
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-
-  .header-actions {
-    justify-content: space-between;
-  }
-
-  .filters-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .products-grid {
-    grid-template-columns: 1fr;
-  }
-
   .receipt-detail-card {
     flex-direction: column;
     align-items: stretch;
@@ -797,6 +855,19 @@
 
   .product-actions {
     justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+
+  .quantity-control {
+    order: 1;
+  }
+
+  .total-price {
+    order: 2;
+  }
+
+  .remove-all-btn {
+    order: 3;
   }
 }
 

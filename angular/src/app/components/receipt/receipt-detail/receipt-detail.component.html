@@ -7,16 +7,16 @@
           <i class="bi bi-arrow-left"></i>
         </button>
         <div class="header-info">
-          <h1 class="page-title">Деталі замовлення</h1>
+          <h1 class="page-title">Order Details</h1>
           <p class="page-subtitle" *ngIf="receipt.id">
-            Замовлення #{{ receipt.id }} від {{ receipt.operationDate | date:'short' }}
+            Order #{{ receipt.id }} from {{ receipt.operationDate | date:'short' }}
           </p>
         </div>
       </div>
       <div class="header-actions">
         <div class="receipt-status" [class.checked-out]="receipt.isCheckedOut">
           <i [class]="receipt.isCheckedOut ? 'bi bi-check-circle-fill' : 'bi bi-clock-fill'"></i>
-          <span>{{ receipt.isCheckedOut ? 'Оформлено' : 'В процесі' }}</span>
+          <span>{{ receipt.isCheckedOut ? 'Completed' : 'In Progress' }}</span>
         </div>
         <button
           class="checkout-btn"
@@ -24,7 +24,7 @@
           (click)="checkOutReceipt()"
           [disabled]="isLoading">
           <i class="bi bi-check-lg"></i>
-          Оформити замовлення
+          Complete Order
         </button>
       </div>
     </div>
@@ -48,42 +48,53 @@
       <div class="section-header">
         <h2 class="section-title">
           <i class="bi bi-cart3"></i>
-          Товари в замовленні
+          Items in Order
         </h2>
         <div class="total-amount">
-          <span class="total-label">Загальна сума:</span>
-          <span class="total-value">{{ getTotalAmount() | currency:'UAH':'symbol':'1.2-2' }}</span>
+          <span class="total-label">Total amount:</span>
+          <span class="total-value">{{ getTotalAmount() | currency:'$':'symbol':'1.2-2' }}</span>
         </div>
       </div>
 
       <div class="receipt-details-grid" *ngIf="receiptDetails.length > 0; else noItems">
-        <div class="receipt-detail-card" *ngFor="let detail of receiptDetails">
+        <div class="receipt-detail-card compact" *ngFor="let detail of receiptDetails">
           <div class="product-info">
-            <h4 class="product-name">{{ detail.productName || 'Продукт #' + detail.productId }}</h4>
+            <h4 class="product-name">{{ detail.productName || 'Product #' + detail.productId }}</h4>
             <div class="product-meta">
-              <span class="quantity">Кількість: {{ detail.quantity }}</span>
-              <span class="unit-price">{{ detail.unitPrice | currency:'UAH':'symbol':'1.2-2' }} / шт</span>
+              <span class="unit-price">{{ detail.unitPrice | currency:'$':'symbol':'1.2-2' }} / unit</span>
               <span class="discount-price" *ngIf="detail.discountUnitPrice !== detail.unitPrice">
-                Зі знижкою: {{ detail.discountUnitPrice | currency:'UAH':'symbol':'1.2-2' }} / шт
-              </span>
+          With discount: {{ detail.discountUnitPrice | currency:'$':'symbol':'1.2-2' }} / unit
+        </span>
             </div>
           </div>
           <div class="product-actions">
-            <div class="total-price">
-              {{ (detail.discountUnitPrice * detail.quantity) | currency:'UAH':'symbol':'1.2-2' }}
+            <div class="quantity-control" *ngIf="!receipt.isCheckedOut">
+              <button
+                class="quantity-btn-small"
+                (click)="removeProductFromReceipt(detail, 1)"
+                [disabled]="detail.quantity <= 1"
+                title="Decrease quantity">
+                <i class="bi bi-dash"></i>
+              </button>
+              <span class="quantity-display">{{ detail.quantity }}</span>
+              <button
+                class="quantity-btn-small"
+                (click)="addSingleProductToReceipt(detail.productId)"
+                title="Increase quantity">
+                <i class="bi bi-plus"></i>
+              </button>
             </div>
-            <button
-              class="remove-btn"
-              *ngIf="!receipt.isCheckedOut"
-              (click)="removeProductFromReceipt(detail, 1)"
-              title="Видалити одиницю">
-              <i class="bi bi-dash"></i>
-            </button>
+            <div class="quantity-display-readonly" *ngIf="receipt.isCheckedOut">
+              Quantity: {{ detail.quantity }}
+            </div>
+            <div class="total-price">
+              {{ (detail.discountUnitPrice * detail.quantity) | currency:'$':'symbol':'1.2-2' }}
+            </div>
             <button
               class="remove-all-btn"
               *ngIf="!receipt.isCheckedOut"
               (click)="removeProductFromReceipt(detail, detail.quantity)"
-              title="Видалити всі">
+              title="Remove all">
               <i class="bi bi-trash"></i>
             </button>
           </div>
@@ -93,8 +104,8 @@
       <ng-template #noItems>
         <div class="empty-state">
           <i class="bi bi-cart-x"></i>
-          <h3>Замовлення порожнє</h3>
-          <p>Додайте товари до замовлення, щоб продовжити</p>
+          <h3>The order is empty</h3>
+          <p>Add products to the order to continue</p>
         </div>
       </ng-template>
     </div>
@@ -104,7 +115,7 @@
       <div class="section-header">
         <h2 class="section-title">
           <i class="bi bi-plus-circle"></i>
-          Додати товари
+          Add items
         </h2>
       </div>
 
@@ -115,27 +126,27 @@
           <div class="filter-group">
             <label class="filter-label">
               <i class="bi bi-search"></i>
-              Пошук
+              Search
             </label>
             <input
               type="text"
               class="filter-input"
               [(ngModel)]="searchQuery"
               (ngModelChange)="onSearchChange()"
-              placeholder="Знайти товар...">
+              placeholder="Find a product...">
           </div>
 
           <!-- Category Filter -->
           <div class="filter-group">
             <label class="filter-label">
               <i class="bi bi-tags"></i>
-              Категорія
+              Category
             </label>
             <select
               class="filter-select"
               [(ngModel)]="selectedCategoryId"
               (ngModelChange)="onFilterChange()">
-              <option [ngValue]="null">Всі категорії</option>
+              <option [ngValue]="null">All categories</option>
               <option *ngFor="let category of categories" [value]="category.id">
                 {{ category.categoryName }}
               </option>
@@ -146,7 +157,7 @@
           <div class="filter-group">
             <label class="filter-label">
               <i class="bi bi-currency-dollar"></i>
-              Мін. ціна
+              Min. price
             </label>
             <input
               type="number"
@@ -160,7 +171,7 @@
           <div class="filter-group">
             <label class="filter-label">
               <i class="bi bi-currency-dollar"></i>
-              Макс. ціна
+              Max. price
             </label>
             <input
               type="number"
@@ -175,29 +186,29 @@
           <div class="filter-group">
             <label class="filter-label">
               <i class="bi bi-sort-down"></i>
-              Сортування
+              Sort
             </label>
             <select
               class="filter-select"
               [(ngModel)]="sortBy"
               (ngModelChange)="onSortChange()">
-              <option value="name">За назвою</option>
-              <option value="price">За ціною</option>
-              <option value="category">За категорією</option>
+              <option value="name">By Name</option>
+              <option value="price">By Price</option>
+              <option value="category">By Category</option>
             </select>
           </div>
 
           <div class="filter-group">
             <label class="filter-label">
               <i class="bi bi-arrow-up-down"></i>
-              Порядок
+              Order
             </label>
             <select
               class="filter-select"
               [(ngModel)]="sortOrder"
               (ngModelChange)="onSortChange()">
-              <option value="asc">За зростанням</option>
-              <option value="desc">За спаданням</option>
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
             </select>
           </div>
         </div>
@@ -205,10 +216,10 @@
         <div class="filters-actions">
           <button class="clear-filters-btn" (click)="clearFilters()">
             <i class="bi bi-x-circle"></i>
-            Очистити фільтри
+            Clear Filters
           </button>
           <div class="results-count">
-            Знайдено: {{ filteredProducts.length }} товарів
+            Found: {{ filteredProducts.length }} products
           </div>
         </div>
       </div>
@@ -222,13 +233,13 @@
           </div>
           <div class="product-body">
             <div class="product-price">
-              {{ product.price | currency:'UAH':'symbol':'1.2-2' }}
+              {{ product.price | currency:'$':'symbol':'1.2-2' }}
             </div>
             <button
               class="add-product-btn"
               (click)="openAddProductModal(product)">
               <i class="bi bi-plus"></i>
-              Додати
+              Add
             </button>
           </div>
         </div>
@@ -237,8 +248,8 @@
       <ng-template #noProducts>
         <div class="empty-state">
           <i class="bi bi-search"></i>
-          <h3>Товари не знайдено</h3>
-          <p>Спробуйте змінити критерії пошуку</p>
+          <h3>No products found</h3>
+          <p>Try adjusting your search criteria</p>
         </div>
       </ng-template>
 
@@ -271,9 +282,9 @@
 
   <!-- Add Product Modal -->
   <div class="modal-overlay" *ngIf="showAddProductModal" (click)="closeAddProductModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-content fixed-modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3 class="modal-title">Додати товар</h3>
+        <h3 class="modal-title">Add Product</h3>
         <button class="modal-close" (click)="closeAddProductModal()">
           <i class="bi bi-x"></i>
         </button>
@@ -283,11 +294,11 @@
         <div class="selected-product">
           <h4>{{ selectedProduct.productName }}</h4>
           <p class="product-category">{{ selectedProduct.categoryName }}</p>
-          <p class="product-price">{{ selectedProduct.price | currency:'UAH':'symbol':'1.2-2' }} за одиницю</p>
+          <p class="product-price">{{ selectedProduct.price | currency:'$':'symbol':'1.2-2' }} per unit</p>
         </div>
 
         <div class="quantity-input">
-          <label for="quantity">Кількість:</label>
+          <label for="quantity">Quantity:</label>
           <div class="quantity-controls">
             <button
               type="button"
@@ -312,24 +323,24 @@
         </div>
 
         <div class="total-preview">
-          <span>Загальна вартість: </span>
-          <strong>{{ (selectedProduct.price * quantityToAdd) | currency:'UAH':'symbol':'1.2-2' }}</strong>
+          <span>Total cost: </span>
+          <strong>{{ (selectedProduct.price * quantityToAdd) | currency:'$':'symbol':'1.2-2' }}</strong>
         </div>
       </div>
 
       <div class="modal-footer">
         <button class="modal-btn secondary" (click)="closeAddProductModal()">
-          Скасувати
+          Cancel
         </button>
         <button
           class="modal-btn primary"
           (click)="addProductToReceipt()"
           [disabled]="isLoading || quantityToAdd <= 0">
-          <span *ngIf="!isLoading">Додати до замовлення</span>
+          <span *ngIf="!isLoading">Add to Order</span>
           <span *ngIf="isLoading">
-            <i class="bi bi-arrow-clockwise spin"></i>
-            Додавання...
-          </span>
+          <i class="bi bi-arrow-clockwise spin"></i>
+          Adding...
+        </span>
         </button>
       </div>
     </div>
@@ -339,7 +350,7 @@
   <div class="loading-overlay" *ngIf="isLoading">
     <div class="loading-spinner">
       <i class="bi bi-arrow-clockwise"></i>
-      <span>Завантаження...</span>
+      <span>Loading...</span>
     </div>
   </div>
 </div>
