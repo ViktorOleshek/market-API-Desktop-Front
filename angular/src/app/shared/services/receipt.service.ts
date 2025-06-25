@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Receipt } from '../models/receipt';
+import {ReceiptDetail} from '../models/receipt-detail';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +23,10 @@ export class ReceiptService {
 
   addReceipt(receipt: Receipt): Observable<Receipt> {
     return this.http.post<Receipt>(this.apiUrl, receipt);
+  }
+
+  getReceiptDetails(receiptId: number): Observable<ReceiptDetail[]> {
+    return this.http.get<ReceiptDetail[]>(`${this.apiUrl}/${receiptId}/details`);
   }
 
   addProductToReceipt(receiptId: number, productId: number, quantity: number): Observable<void> {

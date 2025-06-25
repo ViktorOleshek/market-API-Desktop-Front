@@ -32,6 +32,8 @@ export class AuthService {
   private tokenKey = 'authToken';
   private userKey = 'currentUser';
   private apiUrl = environment.apiUrl;
+  private googleAuthObserver: any = null;
+
 
   // API endpoints
   private loginUrl = `${this.apiUrl}/auth/login`;
@@ -64,17 +66,83 @@ export class AuthService {
     return this.http.post<AuthResponse>(this.registerUrl, registerData);
   }
 
+// У auth.service.ts замінити методи Google автентифікації:
+
   /**
-   * Login with Google OAuth
+   * Initialize Google OAuth
    */
-  loginWithGoogle(): Observable<AuthResponse> {
-    // In a real implementation, this would redirect to Google OAuth
-    // For now, we'll simulate the OAuth flow
-    return this.http.get<AuthResponse>(`${this.googleAuthUrl}/callback`).pipe(
+  initializeGoogleAuth(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!(window as any).google) {
+        reject('Google SDK not loaded');
+        return;
+      }
+
+      (window as any).google.accounts.id.initialize({
+        client_id: environment.googleClientId,
+        callback: (response: any) => this.handleGoogleCallback(response)
+      });
+
+      resolve();
+    });
+  }
+
+  handleOAuthCallback(code: string, provider: string): Observable<AuthResponse> {
+    const callbackUrl = `${this.apiUrl}/auth/${provider}/callback`;
+    return this.http.post<AuthResponse>(callbackUrl, { code }).pipe(
       tap((response) => {
         this.storeAuthData(response);
       })
     );
+  }
+
+  loginWithGoogle(): Observable<AuthResponse> {
+    return new Observable(observer => {
+      this.initializeGoogleAuth().then(() => {
+        (window as any).google.accounts.id.prompt((notification: any) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            // Fallback to popup
+            (window as any).google.accounts.id.renderButton(
+              document.getElementById('google-signin-button'),
+              { theme: 'outline', size: 'large' }
+            );
+          }
+        });
+
+        // Store observer for callback
+        this.googleAuthObserver = observer;
+      }).catch(error => {
+        observer.error(error);
+      });
+    });
+  }
+
+  /**
+   * Handle Google OAuth callback
+   */
+  private handleGoogleCallback(response: any): void {
+    // Відправляємо JWT token на бекенд для верифікації
+    const payload = {
+      credential: response.credential
+    };
+    console.log('Send to back-end:', payload);
+
+    this.http.post<AuthResponse>(`${this.apiUrl}/auth/google-verify`, {
+      credential: response.credential
+    }).subscribe({
+      next: (authResponse) => {
+        this.storeAuthData(authResponse);
+        if (this.googleAuthObserver) {
+          this.googleAuthObserver.next(authResponse);
+          this.googleAuthObserver.complete();
+        }
+      },
+      error: (error) => {
+        if (this.googleAuthObserver) {
+          this.googleAuthObserver.error(error);
+        }
+      }
+    });
   }
 
   /**

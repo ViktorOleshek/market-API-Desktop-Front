@@ -7,6 +7,7 @@ import { CustomerDetailComponent } from './components/customer/customer-detail/c
 import { ReceiptListComponent } from './components/receipt/receipt-list/receipt-list.component';
 import { ReceiptDetailComponent } from './components/receipt/receipt-detail/receipt-detail.component';
 import { LoginComponent } from './components/login/login.component';
+import { OAuthCallbackComponent } from './components/oauth-callback/oauth-callback.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthGuard } from './shared/guard/auth.guard';
 import {NotFoundComponent} from './components/not-found/not-found.component';
@@ -16,6 +17,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'oauth/callback', component: OAuthCallbackComponent },
 
   // Protected routes - only for authenticated users
   { path: 'customers', component: CustomerListComponent, canActivate: [AuthGuard] },

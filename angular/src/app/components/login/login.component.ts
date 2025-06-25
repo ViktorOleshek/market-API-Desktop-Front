@@ -66,9 +66,6 @@ export class LoginComponent {
     });
   }
 
-  /**
-   * Handle Google OAuth login
-   */
   loginWithGoogle(): void {
     this.clearMessages();
     this.isLoading = true;

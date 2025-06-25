@@ -89,7 +89,7 @@ export class ReceiptListComponent implements OnInit  {
   }
 
   editReceipt(id: number): void {
-    this.router.navigate([`/receipts/edit/${id}`]);
+    this.router.navigate([`/receipts/${id}`]);
   }
 
   deleteReceipt(id: number): void {
