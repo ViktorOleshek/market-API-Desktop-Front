@@ -1,47 +1,138 @@
-<div class="receipt-list container my-4 p-4 bg-white rounded shadow-sm">
-  <h2 class="text-center mb-4">Receipts</h2>
-
-  <!-- Wrapper для горизонтальної прокрутки -->
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover">
-      <thead class="thead-dark">
-      <tr>
-        <th scope="col" (click)="toggleSort('customerId')" class="cursor-pointer">
-          Customer Id <span [innerHTML]="getSortIcon('customerId')"></span>
-        </th>
-        <th scope="col" (click)="toggleSort('operationDate')" class="cursor-pointer">
-          Operation Date <span [innerHTML]="getSortIcon('operationDate')"></span>
-        </th>
-        <th scope="col" (click)="toggleSort('isCheckedOut')" class="cursor-pointer">
-          Checked Out <span [innerHTML]="getSortIcon('isCheckedOut')"></span>
-        </th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let receipt of paginatedReceipts | sort:sortField:sortOrder">
-        <td>{{ receipt.customerId }}</td>
-        <td>{{ receipt.operationDate | formatDate }}</td>
-        <td>{{ receipt.isCheckedOut ? 'Yes' : 'No' }}</td>
-        <td>
-          <button (click)="editReceipt(receipt.id)" class="btn btn-success btn-sm">
-            <i class="bi bi-pencil"></i>
-          </button>
-          <button (click)="deleteReceipt(receipt.id)" class="btn btn-danger btn-sm">
-            <i class="bi bi-trash"></i>
-          </button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+<div class="receipt-list-container">
+  <div class="header-section">
+    <div class="title-wrapper">
+      <i class="bi bi-receipt-cutoff"></i>
+      <h2>My Orders</h2>
+    </div>
+    <button (click)="addReceipt()" class="btn-add-receipt">
+      <i class="bi bi-plus-circle"></i>
+      <span>New Order</span>
+    </button>
   </div>
 
-  <div class="d-flex justify-content-between align-items-center mt-3">
-    <div>
-      <button (click)="prevPage()" [disabled]="currentPage === 1" class="btn btn-secondary btn-sm">Previous</button>
-      <span class="mx-2">Page {{ currentPage }} of {{ totalPages }}</span>
-      <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary btn-sm">Next</button>
+  <div class="table-container">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+        <tr>
+          <th>
+            #
+          </th>
+          <th (click)="toggleSort('operationDate')" class="sortable">
+            Order Date <span [innerHTML]="getSortIcon('operationDate')"></span>
+          </th>
+          <th (click)="toggleSort('isCheckedOut')" class="sortable">
+            Status <span [innerHTML]="getSortIcon('isCheckedOut')"></span>
+          </th>
+          <th (click)="toggleSort('totalPrice')" class="sortable">
+            Price <span [innerHTML]="getSortIcon('operationDate')"></span>
+          </th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let receipt of paginatedReceipts | sort:sortField:sortOrder; let i = index" class="table-row">
+          <td class="number-cell">
+            {{ (currentPage - 1) * itemsPerPage + i + 1 }}
+          </td>
+          <td class="date-cell">
+            <div class="date-info">
+              <i class="bi bi-calendar3"></i>
+              <span>{{ receipt.operationDate | formatDate }}</span>
+            </div>
+          </td>
+          <td class="status-cell">
+              <span class="status-badge" [class.completed]="receipt.isCheckedOut" [class.pending]="!receipt.isCheckedOut">
+                <i class="bi" [class.bi-check-circle-fill]="receipt.isCheckedOut" [class.bi-clock-fill]="!receipt.isCheckedOut"></i>
+                {{ receipt.isCheckedOut ? 'Completed' : 'Pending' }}
+              </span>
+          </td>
+          <td class="price-cell">
+            <div class="price-info">
+              <span class="price-amount">{{ receipt.totalPrice | currency:'USD':'symbol':'1.2-2' }}</span>
+            </div>
+          </td>
+          <td class="actions-cell">
+            <div class="action-buttons">
+              <button (click)="editReceipt(receipt.id)" class="btn-edit" title="Edit Order">
+                <i class="bi bi-pencil-square"></i>
+              </button>
+              <button (click)="deleteReceipt(receipt.id)" class="btn-delete" title="Delete Order">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="paginatedReceipts.length === 0" class="empty-row">
+          <td colspan="4" class="empty-message">
+            <i class="bi bi-inbox"></i>
+            <span>No orders found</span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
-    <button (click)="addReceipt()" class="btn btn-primary btn-sm">Add Receipt</button>
+  </div>
+
+  <div class="pagination-section">
+    <div class="pagination-info">
+      <span>Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, receipts.length) }} of {{ receipts.length }} orders</span>
+    </div>
+    <div class="pagination-controls">
+      <button (click)="prevPage()" [disabled]="currentPage === 1" class="btn-page">
+        <i class="bi bi-chevron-left"></i>
+        Previous
+      </button>
+      <span class="page-indicator">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="btn-page">
+        Next
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Додайте модальне вікно в кінець файлу, перед закриваючим </div> -->
+  <!-- Modal для додавання замовлення -->
+  <div class="modal-overlay" *ngIf="showAddModal" (click)="closeAddModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Create New Order</h3>
+        <button class="btn-close" (click)="closeAddModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="addReceiptForm" (ngSubmit)="submitNewReceipt()">
+          <div class="form-group">
+            <label for="operationDate">Order Date:</label>
+            <input
+              type="date"
+              id="operationDate"
+              formControlName="operationDate"
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input
+                type="checkbox"
+                formControlName="isCheckedOut">
+              Mark as completed
+            </label>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeAddModal()">
+              Cancel
+            </button>
+            <button type="submit" class="btn-create" [disabled]="!addReceiptForm.valid">
+              <i class="bi bi-plus-circle"></i>
+              Create Order
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>

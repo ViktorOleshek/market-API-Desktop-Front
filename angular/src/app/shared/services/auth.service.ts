@@ -145,6 +145,22 @@ export class AuthService {
     });
   }
 
+  // Додайте цей метод до класу AuthService
+  getCustomerIdFromToken(): number | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // .NET ClaimTypes.NameIdentifier = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+      const nameId = payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+      return nameId ? parseInt(nameId) : null;
+    } catch (error) {
+      console.error('Error parsing token:', error);
+      return null;
+    }
+  }
+
   /**
    * Login with Microsoft OAuth
    */

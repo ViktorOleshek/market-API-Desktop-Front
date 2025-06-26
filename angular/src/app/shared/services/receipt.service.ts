@@ -17,6 +17,11 @@ export class ReceiptService {
     return this.http.get<Receipt[]>(this.apiUrl);
   }
 
+  // Додайте цей метод до класу ReceiptService
+  getReceiptsByCustomerId(customerId: number): Observable<Receipt[]> {
+    return this.http.get<Receipt[]>(`${this.apiUrl}/customer/${customerId}`);
+  }
+
   getReceiptById(id: number): Observable<Receipt> {
     return this.http.get<Receipt>(`${this.apiUrl}/${id}`);
   }

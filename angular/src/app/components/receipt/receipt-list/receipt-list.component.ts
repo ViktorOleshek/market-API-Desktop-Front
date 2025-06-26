@@ -2,10 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ReceiptService } from '../../../shared/services/receipt.service';
 import { Receipt } from '../../../shared/models/receipt';
 import { Router } from '@angular/router';
-import {NgForOf} from '@angular/common';
+import {CurrencyPipe, NgForOf, NgIf} from '@angular/common';
 import {Customer} from '../../../shared/models/customer';
 import {FormatDatePipe} from '../../../shared/pipes/format-date.pipe';
 import {SortPipe} from '../../../shared/pipes/sort.pipe';
+import { AuthService } from '../../../shared/services/auth.service';
+import { CustomerService } from '../../../shared/services/customer.service';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-receipt-list',
@@ -13,16 +16,23 @@ import {SortPipe} from '../../../shared/pipes/sort.pipe';
   imports: [
     NgForOf,
     FormatDatePipe,
-    SortPipe
+    SortPipe,
+    NgIf,
+    ReactiveFormsModule,
+    CurrencyPipe
   ],
   styleUrls: ['./receipt-list.component.css']
 })
 export class ReceiptListComponent implements OnInit  {
-  receipts: Receipt[] = [];
   paginatedReceipts: Receipt[] = [];
+  receipts: (Receipt & { customerName?: string })[] = [];
+  Math = Math;
 
   sortField: string = '';
   sortOrder: 'asc' | 'desc' = 'asc';
+
+  showAddModal: boolean = false;
+  addReceiptForm: FormGroup;
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
@@ -30,8 +40,17 @@ export class ReceiptListComponent implements OnInit  {
 
   constructor(
     private receiptService: ReceiptService,
-    private router: Router
-  ) {}
+    private authService: AuthService,
+    private customerService: CustomerService,
+    private router: Router,
+    private fb: FormBuilder
+  ) {
+    this.addReceiptForm = this.fb.group({
+      operationDate: [new Date().toISOString().split('T')[0], Validators.required],
+      isCheckedOut: [false]
+    });
+  }
+
 
   ngOnInit(): void {
     this.loadReceipts();
@@ -77,15 +96,74 @@ export class ReceiptListComponent implements OnInit  {
   }
 
   loadReceipts(): void {
-    this.receiptService.getAllReceipts().subscribe(
+    const customerId = this.authService.getCustomerIdFromToken();
+
+    if (!customerId) {
+      console.error('Customer ID not found in token');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.receiptService.getReceiptsByCustomerId(customerId).subscribe(
       (data) => {
-        this.receipts = data;
-        this.updatePagination();
+        // Завантажуємо дані клієнтів для відображення імен
+        this.customerService.getAllCustomers().subscribe(
+          (customers) => {
+            this.receipts = data.map(receipt => {
+              const customer = customers.find(c => c.id === receipt.customerId);
+              return {
+                ...receipt,
+                customerName: customer ? `${customer.name} ${customer.surname}` : 'Unknown Customer',
+                totalPrice: 0 // Початкове значення
+              };
+            });
+
+            // Завантажуємо ціни для кожного чека
+            this.loadReceiptPrices();
+          },
+          (error) => {
+            console.error('Failed to load customers:', error);
+            this.receipts = data.map(receipt => ({
+              ...receipt,
+              customerName: 'Unknown Customer',
+              totalPrice: 0
+            }));
+            this.loadReceiptPrices();
+          }
+        );
       },
       (error) => {
         console.error('Failed to load receipts:', error);
       }
     );
+  }
+
+// Додати новий метод:
+  private loadReceiptPrices(): void {
+    this.receipts.forEach((receipt, index) => {
+      this.receiptService.getReceiptById(receipt.id).subscribe(
+        (detailedReceipt) => {
+          // Отримуємо суму чека
+          this.receiptService.getReceiptDetails(receipt.id).subscribe(
+            (details) => {
+              const totalPrice = details.reduce((sum, detail) =>
+                sum + (detail.discountUnitPrice * detail.quantity), 0
+              );
+              this.receipts[index] = { ...this.receipts[index], totalPrice };
+              this.updatePagination();
+            },
+            (error) => {
+              console.error(`Failed to load details for receipt ${receipt.id}:`, error);
+              this.receipts[index] = { ...this.receipts[index], totalPrice: 0 };
+              this.updatePagination();
+            }
+          );
+        },
+        (error) => {
+          console.error(`Failed to load receipt ${receipt.id}:`, error);
+        }
+      );
+    });
   }
 
   editReceipt(id: number): void {
@@ -108,6 +186,56 @@ export class ReceiptListComponent implements OnInit  {
   }
 
   addReceipt(): void {
-    this.router.navigate(['/receipts/add']);
+    this.showAddModal = true;
+  }
+
+// Додайте нові методи
+  closeAddModal(): void {
+    this.showAddModal = false;
+    this.addReceiptForm.reset({
+      operationDate: new Date().toISOString().split('T')[0],
+      isCheckedOut: false
+    });
+  }
+
+  submitNewReceipt(): void {
+    if (this.addReceiptForm.valid) {
+      const customerId = this.authService.getCustomerIdFromToken();
+
+      if (!customerId) {
+        console.error('Customer ID not found in token');
+        return;
+      }
+
+      const formValue = this.addReceiptForm.value;
+      const newReceipt = new Receipt(
+        0,
+        customerId,
+        new Date(formValue.operationDate),
+        formValue.isCheckedOut
+      );
+
+      this.receiptService.addReceipt(newReceipt).subscribe(
+        (createdReceipt) => {
+          console.log('Receipt created successfully:', createdReceipt);
+          this.loadReceipts();
+          this.closeAddModal();
+          this.showSuccessMessage('Order created successfully!');
+        },
+        (error) => {
+          console.error('Failed to create receipt:', error);
+          this.showErrorMessage('Failed to create order. Please try again.');
+        }
+      );
+    }
+  }
+
+// Додайте допоміжні методи для показу повідомлень
+  private showSuccessMessage(message: string): void {
+    alert(message); // Можна замінити на toast notification
+  }
+
+  private showErrorMessage(message: string): void {
+    alert(message); // Можна замінити на toast notification
   }
 }
