@@ -9,13 +9,11 @@ public class Customer
     public Customer()
         : base()
     {
-        this.Person = new Person();
     }
 
     public Customer(int id)
         : base(id)
     {
-        this.Person = new Person();
     }
 
     public int PersonId { get; set; }

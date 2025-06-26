@@ -16,7 +16,7 @@ public class ProductCategory
     {
     }
 
-    [Column("CaregoryName")]
+    [Column("CategoryName")]
     public virtual string CategoryName { get; set; }
 
     public virtual ICollection<Product> Products { get; init; }

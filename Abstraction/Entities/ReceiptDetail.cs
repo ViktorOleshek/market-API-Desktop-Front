@@ -11,15 +11,11 @@ public class ReceiptDetail
     public ReceiptDetail()
         : base()
     {
-        Receipt = new Receipt();
-        Product = new Product();
     }
 
     public ReceiptDetail(int id)
         : base(id)
     {
-        Receipt = new Receipt();
-        Product = new Product();
     }
 
     [ForeignKey(nameof(Receipt))]

@@ -131,6 +131,12 @@ public class ReceiptService
         await this.UnitOfWork.SaveAsync();
     }
 
+    public async Task<IEnumerable<ReceiptModel>> GetReceiptsByCustomerIdAsync(int customerId)
+    {
+        var receipts = await this.UnitOfWork.ReceiptRepository.GetReceiptsByCustomerIdAsync(customerId);
+        return this.Mapper.Map<IEnumerable<ReceiptModel>>(receipts);
+    }
+
     protected override void Validation(ReceiptModel model)
     {
         var projectCreationDate = new DateTime(1950, 1, 1);

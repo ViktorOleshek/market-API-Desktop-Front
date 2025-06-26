@@ -100,8 +100,11 @@ public class TradeMarketDbContext
              .HasMaxLength(80);
 
             e.Property(u => u.Password)
-             .IsRequired()
              .HasMaxLength(255);
+
+            e.Property(u => u.Email)
+             .IsRequired()
+             .HasMaxLength(60);
 
             e.Property(u => u.Role)
              .IsRequired()

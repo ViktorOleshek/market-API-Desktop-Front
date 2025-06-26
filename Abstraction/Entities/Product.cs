@@ -9,13 +9,11 @@ public class Product
     public Product()
         : base()
     {
-        Category = new ProductCategory();
     }
 
     public Product(int id)
         : base(id)
     {
-        Category = new ProductCategory();
     }
 
     [Column("ProductCategoryId")]

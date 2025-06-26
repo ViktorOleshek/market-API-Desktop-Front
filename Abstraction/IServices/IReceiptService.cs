@@ -16,4 +16,6 @@ public interface IReceiptService
     Task CheckOutAsync(int receiptId);
 
     Task<IEnumerable<ReceiptModel>> GetReceiptsByPeriodAsync(DateTime startDate, DateTime endDate);
+    
+    Task<IEnumerable<ReceiptModel>> GetReceiptsByCustomerIdAsync(int customerId);
 }

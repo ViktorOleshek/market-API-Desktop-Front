@@ -20,4 +20,10 @@ public class UserRepository
             .Include(u => u.Person)
             .FirstOrDefaultAsync(u => u.Username == username);
     }
+    public async Task<User> GetByEmailAsync(string email)
+    {
+        return await this.Context.Set<User>()
+            .Include(u => u.Person)
+            .FirstOrDefaultAsync(u => u.Username == email || u.Email == email);
+    }
 }

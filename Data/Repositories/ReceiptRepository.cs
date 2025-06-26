@@ -4,6 +4,7 @@ using Data.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Data.Repositories;
@@ -15,6 +16,18 @@ public class ReceiptRepository
         : base(context)
     {
         ArgumentNullException.ThrowIfNull(context);
+    }
+
+    public async Task<IEnumerable<Receipt>> GetReceiptsByCustomerIdAsync(int customerId)
+    {
+        return await this.Context.Set<Receipt>()
+            .Include(e => e.ReceiptDetails)
+                .ThenInclude(e => e.Product)
+                    .ThenInclude(e => e.Category)
+            .Include(e => e.Customer)
+                .ThenInclude(e => e.Person)
+            .Where(r => r.CustomerId == customerId)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Receipt>> GetAllWithDetailsAsync()

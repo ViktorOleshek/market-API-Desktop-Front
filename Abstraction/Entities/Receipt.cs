@@ -9,13 +9,11 @@ public class Receipt
     public Receipt()
         : base()
     {
-        this.Customer = new Customer();
     }
 
     public Receipt(int id)
         : base(id)
     {
-        this.Customer = new Customer();
     }
 
     public int CustomerId { get; set; }
