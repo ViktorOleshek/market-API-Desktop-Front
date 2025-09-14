@@ -106,7 +106,6 @@ export class ReceiptListComponent implements OnInit  {
 
     this.receiptService.getReceiptsByCustomerId(customerId).subscribe(
       (data) => {
-        // Завантажуємо дані клієнтів для відображення імен
         this.customerService.getAllCustomers().subscribe(
           (customers) => {
             this.receipts = data.map(receipt => {
@@ -114,11 +113,10 @@ export class ReceiptListComponent implements OnInit  {
               return {
                 ...receipt,
                 customerName: customer ? `${customer.name} ${customer.surname}` : 'Unknown Customer',
-                totalPrice: 0 // Початкове значення
+                totalPrice: 0
               };
             });
 
-            // Завантажуємо ціни для кожного чека
             this.loadReceiptPrices();
           },
           (error) => {
@@ -138,7 +136,6 @@ export class ReceiptListComponent implements OnInit  {
     );
   }
 
-// Додати новий метод:
   private loadReceiptPrices(): void {
     this.receipts.forEach((receipt, index) => {
       this.receiptService.getReceiptById(receipt.id).subscribe(
