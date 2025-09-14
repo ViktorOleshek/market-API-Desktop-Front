@@ -47,7 +47,8 @@ public class Startup
                         ValidateLifetime = true,
                         ValidIssuer = Configuration["JwtSettings:Issuer"],
                         ValidAudience = Configuration["JwtSettings:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SecretKey"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(Configuration["JwtSettings:SecretKey"]))
                     };
                 });
 
@@ -56,13 +57,7 @@ public class Startup
             options.UseSqlServer(this.Configuration.GetConnectionString("Market")));
         services.AddScoped<IUnitOfWork, Data.Data.UnitOfWork>();
 
-        // MongoDB configuration
-        //var mongoConnectionString = this.Configuration.GetConnectionString("MongoMarket");
         //var mongoClient = new MongoClient(mongoConnectionString);
-        //var mongoDatabase = mongoClient.GetDatabase("TradeMarket");
-        //services.AddSingleton<IMongoDatabase>(mongoDatabase);
-        //services.AddScoped<IUnitOfWork, DalMongoDB.Data.UnitOfWork>();
-
         services.AddScoped<IProductService, Business.Services.ProductService>();
         services.AddScoped<ICustomerService, Business.Services.CustomerService>();
         services.AddScoped<IReceiptService, Business.Services.ReceiptService>();
