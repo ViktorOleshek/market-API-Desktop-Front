@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Abstraction.Models;
+﻿using Abstraction.Models;
 
-namespace Abstraction.IServices
+namespace Abstraction.IServices;
+
+public interface ICustomerService
+    : ICrud<CustomerModel>
 {
-    public interface ICustomerService : ICrud<CustomerModel>
-    {
-        Task<IEnumerable<CustomerModel>> GetCustomersByProductIdAsync(int productId);
-    }
+    Task<IEnumerable<CustomerModel>> GetCustomersByProductIdAsync(int productId);
 }

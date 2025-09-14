@@ -1,9 +1,9 @@
-﻿using Abstraction.IEntities;
+﻿using Abstraction.Entities;
 
-namespace Abstraction.IRepositories
+namespace Abstraction.IRepositories;
+
+public interface IReceiptDetailRepository
+    : IRepository<ReceiptDetail>
 {
-    public interface IReceiptDetailRepository : IRepository<IReceiptDetail>
-    {
-        Task<IEnumerable<IReceiptDetail>> GetAllWithDetailsAsync();
-    }
+    Task<IEnumerable<ReceiptDetail>> GetAllWithDetailsAsync();
 }

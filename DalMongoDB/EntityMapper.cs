@@ -1,147 +1,144 @@
-﻿using Abstraction.IEntities;
-using DalMongoDB.Entities;
+﻿using Abstraction.Entities;
 using MongoDB.Bson;
-using System.Linq;
 
-namespace DalMongoDB.Mappers
+namespace DalMongoDB.Mappers;
+
+public static class EntityMapper
 {
-    public static class EntityMapper
+    public static Customer MapToCustomer(BsonDocument bsonCustomer)
     {
-        public static Customer MapToCustomer(BsonDocument bsonCustomer)
+        return new Customer
         {
-            return new Customer
+            Id = bsonCustomer ["_id"].AsInt32,
+            PersonId = bsonCustomer ["PersonId"].AsInt32,
+            DiscountValue = bsonCustomer ["DiscountValue"].AsInt32,
+            Receipts = bsonCustomer ["Receipts"].AsBsonArray.Select(r => new Receipt
             {
-                Id = bsonCustomer ["_id"].AsInt32,
-                PersonId = bsonCustomer ["PersonId"].AsInt32,
-                DiscountValue = bsonCustomer ["DiscountValue"].AsInt32,
-                Receipts = bsonCustomer ["Receipts"].AsBsonArray.Select(r => new Receipt
-                {
-                    Id = r ["_id"].AsInt32,
-                    CustomerId = r ["CustomerId"].AsInt32,
-                    OperationDate = r ["OperationDate"].ToUniversalTime(),
-                    IsCheckedOut = r ["IsCheckedOut"].AsBoolean
-                }).ToList(),
-                Person = bsonCustomer ["Person"].AsBsonArray.Select(p => new Person
+                Id = r ["_id"].AsInt32,
+                CustomerId = r ["CustomerId"].AsInt32,
+                OperationDate = r ["OperationDate"].ToUniversalTime(),
+                IsCheckedOut = r ["IsCheckedOut"].AsBoolean
+            }).ToList(),
+            Person = bsonCustomer ["Person"].AsBsonArray.Select(p => new Person
+            {
+                Id = p ["_id"].AsInt32,
+                Name = p ["Name"].AsString,
+                Surname = p ["Surname"].AsString,
+                BirthDate = p ["BirthDate"].ToUniversalTime()
+            }).FirstOrDefault()
+        };
+    }
+
+    public static Receipt MapToReceipt(BsonDocument document)
+    {
+        return new Receipt
+        {
+            Id = document ["_id"].AsInt32,
+            CustomerId = document ["CustomerId"].AsInt32,
+            OperationDate = document ["OperationDate"].ToUniversalTime(),
+            IsCheckedOut = document ["IsCheckedOut"].AsBoolean,
+            Customer = document ["CustomerDetails"].AsBsonArray.Select(c => new Customer
+            {
+                Id = c ["_id"].AsInt32,
+                PersonId = c ["PersonId"].AsInt32,
+                DiscountValue = c ["DiscountValue"].AsInt32,
+                Person = c ["PersonDetails"].AsBsonArray.Select(p => new Person
                 {
                     Id = p ["_id"].AsInt32,
                     Name = p ["Name"].AsString,
                     Surname = p ["Surname"].AsString,
                     BirthDate = p ["BirthDate"].ToUniversalTime()
                 }).FirstOrDefault()
-            };
-        }
+            }).FirstOrDefault(),
+            ReceiptDetails = document ["ReceiptDetails"].AsBsonArray.Select(detail => new ReceiptDetail
+            {
+                Id = detail ["_id"].AsInt32,
+                ReceiptId = detail ["ReceiptId"].AsInt32,
+                ProductId = detail ["ProductId"].AsInt32,
+                DiscountUnitPrice = detail ["DiscountUnitPrice"].AsDecimal,
+                UnitPrice = detail ["UnitPrice"].AsDecimal,
+                Quantity = detail ["Quantity"].AsInt32
+            }).ToList()
+        };
+    }
 
-        public static Receipt MapToReceipt(BsonDocument document)
+    public static ReceiptDetail MapToReceiptDetail(dynamic item)
+    {
+        var receiptDetail = new ReceiptDetail
         {
-            return new Receipt
-            {
-                Id = document ["_id"].AsInt32,
-                CustomerId = document ["CustomerId"].AsInt32,
-                OperationDate = document ["OperationDate"].ToUniversalTime(),
-                IsCheckedOut = document ["IsCheckedOut"].AsBoolean,
-                Customer = document ["CustomerDetails"].AsBsonArray.Select(c => new Customer
-                {
-                    Id = c ["_id"].AsInt32,
-                    PersonId = c ["PersonId"].AsInt32,
-                    DiscountValue = c ["DiscountValue"].AsInt32,
-                    Person = c ["PersonDetails"].AsBsonArray.Select(p => new Person
-                    {
-                        Id = p ["_id"].AsInt32,
-                        Name = p ["Name"].AsString,
-                        Surname = p ["Surname"].AsString,
-                        BirthDate = p ["BirthDate"].ToUniversalTime()
-                    }).FirstOrDefault()
-                }).FirstOrDefault(),
-                ReceiptDetails = document ["ReceiptDetails"].AsBsonArray.Select(detail => new ReceiptDetail
-                {
-                    Id = detail ["_id"].AsInt32,
-                    ReceiptId = detail ["ReceiptId"].AsInt32,
-                    ProductId = detail ["ProductId"].AsInt32,
-                    DiscountUnitPrice = detail ["DiscountUnitPrice"].AsDecimal,
-                    UnitPrice = detail ["UnitPrice"].AsDecimal,
-                    Quantity = detail ["Quantity"].AsInt32
-                }).ToList()
-            };
-        }
+            Id = item.Id,
+            ProductId = item.ProductId,
+            ReceiptId = item.ReceiptId,
+            Quantity = item.Quantity,
+            DiscountUnitPrice = item.DiscountUnitPrice,
+            UnitPrice = item.UnitPrice
+        };
 
-        public static IReceiptDetail MapToReceiptDetail(dynamic item)
+        // Мапінг зв'язаних продуктів
+        if (item.ProductDetails != null && item.ProductDetails.Count > 0)
         {
-            var receiptDetail = new ReceiptDetail
+            var productDetails = item.ProductDetails [0]; // Припускаємо, що один продукт відповідає
+            receiptDetail.Product = new Product
             {
-                Id = item.Id,
-                ProductId = item.ProductId,
-                ReceiptId = item.ReceiptId,
-                Quantity = item.Quantity,
-                DiscountUnitPrice = item.DiscountUnitPrice,
-                UnitPrice = item.UnitPrice
+                Id = productDetails.Id,
+                ProductName = productDetails.Name,
+                Price = productDetails.Price
             };
-
-            // Мапінг зв'язаних продуктів
-            if (item.ProductDetails != null && item.ProductDetails.Count > 0)
-            {
-                var productDetails = item.ProductDetails [0]; // Припускаємо, що один продукт відповідає
-                receiptDetail.Product = new Product
-                {
-                    Id = productDetails.Id,
-                    ProductName = productDetails.Name,
-                    Price = productDetails.Price
-                };
-            }
-
-            // Мапінг зв'язаного рахунку
-            if (item.ReceiptDetails != null && item.ReceiptDetails.Count > 0)
-            {
-                var receiptDetails = item.ReceiptDetails [0]; // Припускаємо, що один рахунок відповідає
-                receiptDetail.Receipt = new Receipt
-                {
-                    Id = receiptDetails.Id,
-                    OperationDate = receiptDetails.OperationDate,
-                    IsCheckedOut = receiptDetails.IsCheckedOut
-                };
-            }
-
-            return receiptDetail;
         }
 
-        public static IProduct MapToProduct(dynamic item)
+        // Мапінг зв'язаного рахунку
+        if (item.ReceiptDetails != null && item.ReceiptDetails.Count > 0)
         {
-            var product = new Product
+            var receiptDetails = item.ReceiptDetails [0]; // Припускаємо, що один рахунок відповідає
+            receiptDetail.Receipt = new Receipt
             {
-                Id = item.Id,
-                ProductName = item.Name,
-                Price = item.Price,
-                ProductCategoryId = item.CategoryId
+                Id = receiptDetails.Id,
+                OperationDate = receiptDetails.OperationDate,
+                IsCheckedOut = receiptDetails.IsCheckedOut
             };
-
-            if (item.ReceiptDetails != null)
-            {
-                var receiptDetailsList = new List<ReceiptDetail>();
-                foreach (var receiptDetail in item.ReceiptDetails)
-                {
-                    receiptDetailsList.Add(new ReceiptDetail
-                    {
-                        Id = receiptDetail.Id,
-                        ProductId = receiptDetail.ProductId,
-                        ReceiptId = receiptDetail.ReceiptId,
-                        Quantity = receiptDetail.Quantity,
-                        DiscountUnitPrice = receiptDetail.DiscountUnitPrice,
-                        UnitPrice = receiptDetail.UnitPrice
-                    });
-                }
-                product.ReceiptDetails = receiptDetailsList;
-            }
-
-            if (item.CategoryDetails != null && item.CategoryDetails.Count > 0)
-            {
-                var category = item.CategoryDetails [0];
-                product.Category = new ProductCategory
-                {
-                    Id = category.Id,
-                    CategoryName = category.Name
-                };
-            }
-
-            return product;
         }
+
+        return receiptDetail;
+    }
+
+    public static Product MapToProduct(dynamic item)
+    {
+        var product = new Product
+        {
+            Id = item.Id,
+            ProductName = item.Name,
+            Price = item.Price,
+            ProductCategoryId = item.CategoryId
+        };
+
+        if (item.ReceiptDetails != null)
+        {
+            var receiptDetailsList = new List<ReceiptDetail>();
+            foreach (var receiptDetail in item.ReceiptDetails)
+            {
+                receiptDetailsList.Add(new ReceiptDetail
+                {
+                    Id = receiptDetail.Id,
+                    ProductId = receiptDetail.ProductId,
+                    ReceiptId = receiptDetail.ReceiptId,
+                    Quantity = receiptDetail.Quantity,
+                    DiscountUnitPrice = receiptDetail.DiscountUnitPrice,
+                    UnitPrice = receiptDetail.UnitPrice
+                });
+            }
+            product.ReceiptDetails = receiptDetailsList;
+        }
+
+        if (item.CategoryDetails != null && item.CategoryDetails.Count > 0)
+        {
+            var category = item.CategoryDetails [0];
+            product.Category = new ProductCategory
+            {
+                Id = category.Id,
+                CategoryName = category.Name
+            };
+        }
+
+        return product;
     }
 }

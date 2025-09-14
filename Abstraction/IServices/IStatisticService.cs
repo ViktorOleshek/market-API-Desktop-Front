@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Abstraction.Models;
+﻿using Abstraction.Models;
 
-namespace Abstraction.IServices
+namespace Abstraction.IServices;
+
+public interface IStatisticService
 {
-    public interface IStatisticService
-    {
-        Task<IEnumerable<ProductModel>> GetMostPopularProductsAsync(int productCount);
+    Task<IEnumerable<ProductModel>> GetMostPopularProductsAsync(int productCount);
 
-        Task<IEnumerable<ProductModel>> GetCustomersMostPopularProductsAsync(int productCount, int customerId);
+    Task<IEnumerable<ProductModel>> GetCustomersMostPopularProductsAsync(int productCount, int customerId);
 
-        Task<IEnumerable<CustomerActivityModel>> GetMostValuableCustomersAsync(int customerCount, DateTime startDate, DateTime endDate);
+    Task<IEnumerable<CustomerActivityModel>> GetMostValuableCustomersAsync(int customerCount, DateTime startDate, DateTime endDate);
 
-        Task<decimal> GetIncomeOfCategoryInPeriod(int categoryId, DateTime startDate, DateTime endDate);
-    }
+    Task<decimal> GetIncomeOfCategoryInPeriod(int categoryId, DateTime startDate, DateTime endDate);
 }

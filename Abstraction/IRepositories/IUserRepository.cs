@@ -1,9 +1,10 @@
-﻿using Abstraction.IEntities;
+﻿using Abstraction.Entities;
 
-namespace Abstraction.IRepositories
+namespace Abstraction.IRepositories;
+
+public interface IUserRepository
+    : IRepository<User>
 {
-    public interface IUserRepository : IRepository<IUser>
-    {
-        Task<IUser> GetByUsernameAsync(string username);
-    }
+    Task<User> GetByUsernameAsync(string username);
+    Task<User> GetByEmailAsync(string email);
 }

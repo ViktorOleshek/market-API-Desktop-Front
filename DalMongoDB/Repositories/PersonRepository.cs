@@ -1,21 +1,15 @@
-﻿using Abstraction.IEntities;
+﻿using Abstraction.Entities;
 using Abstraction.IRepositories;
-using DalMongoDB.Entities;
 using MongoDB.Driver;
 
-namespace DalMongoDB.Repositories
-{
-    public class PersonRepository : AbstractRepository<IPerson>, IPersonRepository
-    {
-        public PersonRepository(IMongoDatabase database)
-            : base(database, "Persons")
-        {
-            ArgumentNullException.ThrowIfNull(database);
-        }
+namespace DalMongoDB.Repositories;
 
-        public IPerson CreateEntity()
-        {
-            return new Person();
-        }
+public class PersonRepository
+    : AbstractRepository<Person>, IPersonRepository
+{
+    public PersonRepository(IMongoDatabase database)
+        : base(database, "Persons")
+    {
+        ArgumentNullException.ThrowIfNull(database);
     }
 }

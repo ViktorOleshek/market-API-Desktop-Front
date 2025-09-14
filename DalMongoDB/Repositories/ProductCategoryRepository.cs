@@ -1,21 +1,15 @@
-﻿using Abstraction.IEntities;
+﻿using Abstraction.Entities;
 using Abstraction.IRepositories;
-using DalMongoDB.Entities;
 using MongoDB.Driver;
 
-namespace DalMongoDB.Repositories
-{
-    public class ProductCategoryRepository : AbstractRepository<IProductCategory>, IProductCategoryRepository
-    {
-        public ProductCategoryRepository(IMongoDatabase database)
-            : base(database, "ProductCategories")
-        {
-            ArgumentNullException.ThrowIfNull(database);
-        }
+namespace DalMongoDB.Repositories;
 
-        public IProductCategory CreateEntity()
-        {
-            return new ProductCategory();
-        }
+public class ProductCategoryRepository
+    : AbstractRepository<ProductCategory>, IProductCategoryRepository
+{
+    public ProductCategoryRepository(IMongoDatabase database)
+        : base(database, "ProductCategories")
+    {
+        ArgumentNullException.ThrowIfNull(database);
     }
 }

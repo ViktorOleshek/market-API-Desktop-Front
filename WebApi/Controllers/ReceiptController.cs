@@ -53,6 +53,20 @@
             }
         }
 
+        [HttpGet("customer/{customerId}")]
+        public async Task<ActionResult<IEnumerable<ReceiptModel>>> GetReceiptsByCustomerId(int customerId)
+        {
+            try
+            {
+                var receipts = await this._receiptService.GetReceiptsByCustomerIdAsync(customerId);
+                return Ok(receipts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("{id}/details")]
         public async Task<ActionResult<IEnumerable<ReceiptDetailModel>>> GetReceiptDetails(int id)
         {

@@ -1,22 +1,16 @@
-﻿using System;
-using Abstraction.IEntities;
+﻿using Abstraction.Entities;
 using Abstraction.IRepositories;
 using Data.Data;
-using Data.Entities;
+using System;
 
-namespace Data.Repositories
+namespace Data.Repositories;
+
+public class ProductCategoryRepository
+    : AbstractRepository<ProductCategory>, IProductCategoryRepository
 {
-    public class ProductCategoryRepository : AbstractRepository<IProductCategory>, IProductCategoryRepository
+    public ProductCategoryRepository(TradeMarketDbContext context)
+        : base(context)
     {
-        public ProductCategoryRepository(TradeMarketDbContext context)
-            : base(context)
-        {
-            ArgumentNullException.ThrowIfNull(context);
-        }
-
-        public override IProductCategory CreateEntity()
-        {
-            return new ProductCategory();
-        }
+        ArgumentNullException.ThrowIfNull(context);
     }
 }
